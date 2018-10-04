@@ -1,0 +1,35 @@
+body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  #container {
+     padding: 1rem;
+     max-width: 1200px;
+     margin-left: auto;
+     margin-right: auto;
+  }
+
+.tab-contents {
+  margin-top: 1rem;
+}
+  
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+fieldset legend {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #000;
+  margin-top: 1rem;
+}
+
+#create-person-phones {
+  margin-bottom: 0;
+}
+
+#create-person-phones-row {
+  margin-bottom: 10px;
+}
