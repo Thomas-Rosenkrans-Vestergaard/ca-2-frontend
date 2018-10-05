@@ -17,7 +17,7 @@ const personColumns = [
             button.classList.add('btn');
             button.addEventListener('click', e => {
                 dataMapper.deletePerson(row['id'], (status, body) => {
-                    if(status != 200){
+                    if (status != 200) {
                         error("Could not delete person.");
                         return;
                     }
@@ -44,9 +44,8 @@ const personColumns = [
     }
 ];
 
-console.log(HtmlTable);
 const personsTable = new HtmlTable("all-persons-table", personColumns);
-document.getElementById("persons-table-target").appendChild(personsTable.tableElement);
+document.getElementById("persons-table-target").appendChild(personsTable.tableContainer);
 
 function view(page) {
     tabs.select(page);
@@ -60,7 +59,7 @@ function viewEditPerson(row) {
     document.getElementById('update-person-address-street').value = row['address']['street'];
     document.getElementById('update-person-address-information').value = row['address']['information'];
     [].slice(document.getElementById('update-person-address-city').children).forEach(option => {
-        if(option.value == row['address']['city']['id'])
+        if (option.value == row['address']['city']['id'])
             option.addAttribute('selected', 'selected');
     });
 
@@ -87,15 +86,19 @@ function error(message) {
 }
 
 function viewPersonsTable(refresh) {
-    if (refresh)
+    if (refresh){
+        personsTable.startSpinner();
         dataMapper.getPersons((status, body) => {
             if (status != 200) {
                 error("Could not retrieve persons table.");
+                personsTable.stopSpinner();
                 return;
             }
 
             personsTable.populate(body);
+            personsTable.stopSpinner();
         });
+    }
 
     tabs.select('persons');
 }
@@ -197,19 +200,24 @@ createPersonSubmit.addEventListener('click', e => {
 const searchPersonForm = document.getElementById('search-person-name-form');
 const searchPersonResultsTarget = document.getElementById('search-person-name-results-target');
 const searchPersonResults = new HtmlTable('search-person-name-results', personColumns);
+searchPersonResults.noResultsMessage = "No persons with the provided name.";
+searchPersonResults.appendMessage("Press the search button to search.");
 searchPersonResultsTarget.appendChild(searchPersonResults.tableElement);
 
 searchPersonForm.addEventListener('submit', e => {
     e.preventDefault();
-    
+
     const firstName = searchPersonForm.firstName.value;
     const lastName = searchPersonForm.lastName.value;
+    searchPersonResults.startSpinner();
     dataMapper.searchPersonsByName(firstName, lastName, (status, response) => {
-        if(status != 200){
+        if (status != 200) {
             error("Could not search by name.");
+            searchPersonResults.stopSpinner();
             return;
         }
 
         searchPersonResults.populate(response);
+        searchPersonResults.stopSpinner();        
     });
 });
