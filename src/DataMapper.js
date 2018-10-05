@@ -43,9 +43,19 @@ class DataMapper {
             .then(body => cb(status, body));
     }
 
+    countPersons(cb){
+        const url = this.baseUrl + "persons/count";
+        this.getFetch(url, cb);
+    }
+
     getPersons(cb) {
         const url = this.baseUrl + "persons";
         this.getFetch(url, cb);
+    }
+
+    getPersonsPaginated(pageSize, pageNumber, callback){
+        const url = this.baseUrl + 'persons/paginated/' + pageSize + '/' + pageNumber;
+        this.getFetch(url, callback);
     }
 
     getCities(cb) {

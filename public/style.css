@@ -58,3 +58,10 @@ h1 {
 .content-container form {
   margin: 0 -0.75rem;
 }
+
+ul.pagination li {
+  background: #eee;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  min-width: 40px;
+}

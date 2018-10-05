@@ -45,6 +45,27 @@ const personColumns = [
 ];
 
 const personsTable = new HtmlTable("all-persons-table", personColumns);
+personsTable.useLazyPagination(20, (page, pageSize, callback) => {
+    dataMapper.getPersonsPaginated(pageSize, page, (status, rows) => {
+        if (status != 200) {
+            error("Could not retrieve page " + page + ".");
+            return;
+        }
+
+        callback(rows);
+    })
+}, callback => {
+    dataMapper.countPersons((status, result) => {
+        if(status != 200){
+            error("Could not count persons.");
+            return;
+        }
+
+        callback(result.count);
+    })
+});
+personsTable.usePaginationButtons();
+personsTable.page(1, 1340);
 document.getElementById("persons-table-target").appendChild(personsTable.tableContainer);
 
 function view(page) {
@@ -86,7 +107,7 @@ function error(message) {
 }
 
 function viewPersonsTable(refresh) {
-    if (refresh){
+    if (refresh) {
         personsTable.startSpinner();
         dataMapper.getPersons((status, body) => {
             if (status != 200) {
@@ -103,7 +124,6 @@ function viewPersonsTable(refresh) {
     tabs.select('persons');
 }
 
-viewPersonsTable(true);
 dataMapper.getCities((status, body) => {
     if (status != 200) {
         error("Could not retrieve cities.");
@@ -202,7 +222,9 @@ const searchPersonResultsTarget = document.getElementById('search-person-name-re
 const searchPersonResults = new HtmlTable('search-person-name-results', personColumns);
 searchPersonResults.noResultsMessage = "No persons with the provided name.";
 searchPersonResults.appendMessage("Press the search button to search.");
-searchPersonResultsTarget.appendChild(searchPersonResults.tableElement);
+searchPersonResults.useEagerPagination(20);
+searchPersonResults.usePaginationButtons();
+searchPersonResultsTarget.appendChild(searchPersonResults.tableContainer);
 
 searchPersonForm.addEventListener('submit', e => {
     e.preventDefault();
@@ -218,6 +240,6 @@ searchPersonForm.addEventListener('submit', e => {
         }
 
         searchPersonResults.populate(response);
-        searchPersonResults.stopSpinner();        
+        searchPersonResults.stopSpinner();
     });
 });
