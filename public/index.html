@@ -13,8 +13,9 @@
     <h1>Krak</h1>
     <div class="col s12">
       <ul class="tabs" id="tabs">
-        <li class="tab col s3"><a class="active" href="#persons">Persons</a></li>
-        <li class="tab col s3"><a href="#create">Create person</a></li>
+        <li class="tab col s4" id="tab-persons"><a class="active" href="#persons">Persons</a></li>
+        <li class="tab col s4" id="tab-create"><a href="#create">Create</a></li>
+        <li class="tab col s4 disabled" id="tab-update"><a href="#update">Update</a></li>
       </ul>
     </div>
     <div id="persons" class="tab-contents col s12"></div>
@@ -69,9 +70,15 @@
           <legend>Phones</legend>
           <div id="create-person-phones-row" class="row">
             <div class="col s12">
-              <ul id="create-person-phones">
-                <li>No phone numbers.</li>
-              </ul>
+              <table id="create-person-phones">
+                <thead>
+                  <th>Number</th>
+                  <th>Description</th>
+                </thead>
+                <tbody>
+                  <td colspan="2">No numbers.</td>
+                </tbody>
+              </table>
             </div>
           </div>
           <form>
@@ -85,14 +92,98 @@
                 <label for="create-person-phone-description">Description</label>
               </div>
               <div class="col s2">
-                  <button type="submit" class="btn-large" id="create-person-phone-add">ADD</button>
-                </div>
+                <button type="submit" class="btn next-to-input-button" id="create-person-phone-add">ADD</button>
+              </div>
             </div>
           </form>
         </fieldset>
         <div class="row">
           <div class="col s12">
-              <button type="submit" id="create-person-submit" class="btn-large">CREATE</button>
+            <button type="submit" id="create-person-submit" class="btn-large">CREATE</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id="update" class="tab-contents col s12">
+      <form id="update-person-form">
+        <fieldset>
+          <legend>General</legend>
+          <div class="row">
+            <div class="col s12 input-field">
+              <input type="text" name="firstName" id="update-person-firstName">
+              <label for="update-person-firstName">First name</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12 input-field">
+              <input type="text" name="lastName" id="update-person-lastName">
+              <label for="update-person-lastName">Last name</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12 input-field">
+              <input type="email" name="email" id="update-person-email">
+              <label for="update-person-email">Email</label>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Address</legend>
+          <div class="row">
+            <div class="col s12 input-field">
+              <input type="text" name="email" id="update-person-address-street">
+              <label for="update-person-address-street">Street</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12 input-field">
+
+              <input type="text" name="email" id="update-person-address-information">
+              <label for="update-person-address-information">Information</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12 input-field">
+              <select id="update-person-address-city">
+                  <option value="" disabled selected>City</option>
+                </select>
+              <label for="update-person-address-city">City</label>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Phones</legend>
+          <div id="update-person-phones-row" class="row">
+            <div class="col s12">
+              <table id="update-person-phones">
+                <thead>
+                  <th>Number</th>
+                  <th>Description</th>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <form>
+            <div class="row">
+              <div class="col s5 input-field">
+                <input type="text" id="update-person-phone-number" required minlength="1" maxlength="255">
+                <label for="update-person-phone-number">Number</label>
+              </div>
+              <div class="col s5 input-field">
+                <input type="text" id="update-person-phone-description" required minlength="1" maxlength="255">
+                <label for="update-person-phone-description">Description</label>
+              </div>
+              <div class="col s2">
+                <button type="submit" class="btn next-to-input-button" id="update-person-phone-add">ADD</button>
+              </div>
+            </div>
+          </form>
+        </fieldset>
+        <div class="row">
+          <div class="col s12">
+            <button type="submit" id="update-person-submit" class="btn-large">UPDATE</button>
           </div>
         </div>
       </form>

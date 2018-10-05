@@ -1,15 +1,91 @@
 const baseUrl = "http://localhost:8080/ca-2-backend/api/";
 const tabs = M.Tabs.getInstance(document.getElementById('tabs'));
 const personsColumns = [
-    column("ID", "id"),
-    column("First name", "firstName"),
-    column("Last name", "lastName"),
-    column("Email", "email"),
+    { name: "ID", key: "id", class: "persons-id" },
+    { name: "First name", key: "firstName", class: "persons-firstName" },
+    { name: "Last name", key: "lastName", class: "persons-lastName" },
+    { name: "Email", key: "email", class: "persons-email" },
+    {
+        name: "Delete",
+        element: row => {
+            const button = document.createElement('button');
+            button.innerText = 'Delete';
+            button.classList.add('btn');
+            button.addEventListener('click', e => {
+                deletePerson(row['id'], (status, body) => {
+                    if(status != 200){
+                        error("Could not delete person.");
+                        return;
+                    }
+
+                    viewPersonsTable(true);
+                });
+            });
+
+            return button;
+        }
+    },
+    {
+        name: "Edit",
+        element: row => {
+            const button = document.createElement('button');
+            button.innerText = 'Edit';
+            button.classList.add('btn');
+            button.addEventListener('click', e => {
+                viewEditPerson(row);
+            });
+
+            return button;
+        }
+    }
 ];
+
+function deletePerson(personId, callback) {
+    const url = baseUrl + "persons/" + personId;
+    fetch(url, {
+        method: 'delete',
+    })
+        .then(response => {
+            status = response.status;
+            return response.json();
+        })
+        .then(body => callback(status, body));
+}
+
 const personsTable = createTable("person-table", personsColumns, document.getElementById("persons"));
 
-function column(name, key) {
-    return { name: name, key: key };
+function view(page) {
+    tabs.select(page);
+}
+
+function viewEditPerson(row) {
+    document.getElementById('tab-update').classList.remove('disabled');
+    document.getElementById('update-person-firstName').value = row['firstName'];
+    document.getElementById('update-person-lastName').value = row['lastName'];
+    document.getElementById('update-person-email').value = row['email'];
+    document.getElementById('update-person-address-street').value = row['address']['street'];
+    document.getElementById('update-person-address-information').value = row['address']['information'];
+    [].slice(document.getElementById('update-person-address-city').children).forEach(option => {
+        if(option.value == row['address']['city']['id'])
+            option.addAttribute('selected', 'selected');
+    });
+
+    const updatePhonesTable = document.getElementById('update-person-phones');
+    const body = updatePhonesTable.children[1];
+    body.innerHTML = '';
+    row['phones'].forEach(phone => {
+        const tr = document.createElement('tr');
+        const tdNumber = document.createElement('td');
+        tdNumber.innerText = phone['number'];
+        const tdDescription = document.createElement('td');
+        tdDescription.innerText = phone['description'];
+        tr.appendChild(tdNumber);
+        tr.appendChild(tdDescription);
+        body.appendChild(tr);
+    });
+
+    M.updateTextFields();
+    view('update');
 }
 
 function createTable(id, columns, parent) {
@@ -33,7 +109,8 @@ function createTableHeaders(thead, id, columns) {
     columns.forEach(column => {
         const th = document.createElement('th');
         th.innerText = column['name'];
-        th.classList.add(id + '-' + column['key']);
+        if (column['class'] != undefined)
+            th.classList.add(column['class']);
         tr.appendChild(th);
     });
     thead.appendChild(tr);
@@ -62,7 +139,7 @@ function getCities(cb) {
 function populatePersons(data) {
 
     const tbody = personsTable.lastChild;
-
+    tbody.innerHTML = '';
     data.forEach(row => {
         appendPerson(tbody, row);
     });
@@ -93,20 +170,23 @@ getCities((status, body) => {
         return;
     }
 
-    const select = document.getElementById("create-person-address-city");
-    body.forEach(row => {
-        const option = document.createElement("option");
-        option.value = row['id'];
-        option.innerText = row['zipCode'] + ' ' + row['name'];
-        select.appendChild(option);
-    });
+    const selects = [document.getElementById("create-person-address-city"), document.getElementById('update-person-address-city')];
 
-    M.FormSelect.init(select);
+    selects.forEach(select => {
+        body.forEach(row => {
+            const option = document.createElement("option");
+            option.value = row['id'];
+            option.innerText = row['zipCode'] + ' ' + row['name'];
+            select.appendChild(option);
+        });
+
+        M.FormSelect.init(select);
+    });
 })
 
 const addPhoneButton = document.getElementById('create-person-phone-add');
-const phoneNumbersList = document.getElementById('create-person-phones');
-let phoneNumbersListInit = false;
+const phoneNumbersTable = document.getElementById('create-person-phones');
+let phoneNumbersTableInit = false;
 let phoneNumbers = [];
 addPhoneButton.addEventListener('click', e => {
     e.preventDefault();
@@ -131,14 +211,19 @@ addPhoneButton.addEventListener('click', e => {
     if (errors)
         return;
 
-    if (!phoneNumbersListInit) {
-        phoneNumbersList.innerHTML = '';
-        phoneNumbersListInit = true;
+    if (!phoneNumbersTableInit) {
+        phoneNumbersTable.children[1].innerHTML = '';
+        phoneNumbersTableInit = true;
     }
 
-    const li = document.createElement('li');
-    li.innerText = number + ', ' + description;
-    phoneNumbersList.appendChild(li);
+    const tr = document.createElement('tr');
+    const tdNumber = document.createElement('td');
+    tdNumber.innerText = number;
+    const tdDescription = document.createElement('td');
+    tdDescription.innerText = description;
+    tr.appendChild(tdNumber);
+    tr.appendChild(tdDescription);
+    phoneNumbersTable.children[1].appendChild(tr);
     phoneNumbers.push({ number: number, description: description });
 
     numberInput.value = '';
@@ -194,8 +279,12 @@ function appendPerson(tbody, person) {
     const tr = document.createElement('tr');
     personsColumns.forEach(column => {
         const td = document.createElement('td');
-        td.innerText = person[column['key']];
-        td.classList.add(personsTable.id + '-' + column['key']);
+        if (column['key'] != undefined)
+            td.innerText = person[column['key']];
+        else if (column['element'] != undefined)
+            td.appendChild(column['element'](person));
+        if (column['class'] != undefined)
+            td.classList.add(column['class']);
         tr.appendChild(td);
     });
 

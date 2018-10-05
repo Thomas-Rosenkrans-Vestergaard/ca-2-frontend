@@ -24,12 +24,19 @@ fieldset legend {
   font-weight: bold;
   color: #000;
   margin-top: 1rem;
+  margin-bottom: 20px;
 }
 
 #create-person-phones {
   margin-bottom: 0;
 }
 
-#create-person-phones-row {
+#create-person-phones-row, #update-person-phones-row {
   margin-bottom: 10px;
+}
+
+.next-to-input-button {
+  display: block;
+  margin-top: 20px;
+  width: 100%;
 }
