@@ -1,6 +1,10 @@
+import HtmlTable from './HtmlTable.js';
+import DataMapper from './dataMapper.js'
+
 const baseUrl = "http://localhost:8080/ca-2-backend/api/";
+const dataMapper = new DataMapper(baseUrl);
 const tabs = M.Tabs.getInstance(document.getElementById('tabs'));
-const personsColumns = [
+const personColumns = [
     { name: "ID", key: "id", class: "persons-id" },
     { name: "First name", key: "firstName", class: "persons-firstName" },
     { name: "Last name", key: "lastName", class: "persons-lastName" },
@@ -12,7 +16,7 @@ const personsColumns = [
             button.innerText = 'Delete';
             button.classList.add('btn');
             button.addEventListener('click', e => {
-                deletePerson(row['id'], (status, body) => {
+                dataMapper.deletePerson(row['id'], (status, body) => {
                     if(status != 200){
                         error("Could not delete person.");
                         return;
@@ -40,19 +44,9 @@ const personsColumns = [
     }
 ];
 
-function deletePerson(personId, callback) {
-    const url = baseUrl + "persons/" + personId;
-    fetch(url, {
-        method: 'delete',
-    })
-        .then(response => {
-            status = response.status;
-            return response.json();
-        })
-        .then(body => callback(status, body));
-}
-
-const personsTable = createTable("person-table", personsColumns, document.getElementById("persons"));
+console.log(HtmlTable);
+const personsTable = new HtmlTable("all-persons-table", personColumns);
+document.getElementById("persons-table-target").appendChild(personsTable.tableElement);
 
 function view(page) {
     tabs.select(page);
@@ -88,83 +82,26 @@ function viewEditPerson(row) {
     view('update');
 }
 
-function createTable(id, columns, parent) {
-    const table = document.createElement("table");
-    const thead = document.createElement("thead");
-    const tbody = document.createElement("tbody");
-
-    table.id = id;
-    table.appendChild(thead);
-    table.appendChild(tbody);
-
-    createTableHeaders(thead, id, columns);
-
-    parent.appendChild(table);
-
-    return table;
-}
-
-function createTableHeaders(thead, id, columns) {
-    const tr = document.createElement('tr');
-    columns.forEach(column => {
-        const th = document.createElement('th');
-        th.innerText = column['name'];
-        if (column['class'] != undefined)
-            th.classList.add(column['class']);
-        tr.appendChild(th);
-    });
-    thead.appendChild(tr);
-}
-
-function getFetch(url, cb) {
-    let status = -1;
-    fetch(url)
-        .then(response => {
-            status = response.status;
-            return response.json();
-        })
-        .then(body => cb(status, body));
-}
-
-function getPersons(cb) {
-    const url = baseUrl + "persons";
-    getFetch(url, cb);
-}
-
-function getCities(cb) {
-    const url = baseUrl + "cities";
-    getFetch(url, cb);
-}
-
-function populatePersons(data) {
-
-    const tbody = personsTable.lastChild;
-    tbody.innerHTML = '';
-    data.forEach(row => {
-        appendPerson(tbody, row);
-    });
-}
-
 function error(message) {
     M.toast({ 'html': message });
 }
 
 function viewPersonsTable(refresh) {
     if (refresh)
-        getPersons((status, body) => {
+        dataMapper.getPersons((status, body) => {
             if (status != 200) {
                 error("Could not retrieve persons table.");
                 return;
             }
 
-            populatePersons(body);
+            personsTable.populate(body);
         });
 
     tabs.select('persons');
 }
 
 viewPersonsTable(true);
-getCities((status, body) => {
+dataMapper.getCities((status, body) => {
     if (status != 200) {
         error("Could not retrieve cities.");
         return;
@@ -245,7 +182,7 @@ createPersonSubmit.addEventListener('click', e => {
         phones: phoneNumbers
     };
 
-    createPerson(submit, (status, body) => {
+    dataMapper.createPerson(submit, (status, body) => {
         if (status != 201) {
             error("Could not create person.");
             error(body.message);
@@ -257,36 +194,22 @@ createPersonSubmit.addEventListener('click', e => {
     });
 });
 
-function createPerson(submit, callback) {
-    const url = baseUrl + "persons";
-    let status = -1;
-    fetch(url, {
-        method: 'post',
-        body: JSON.stringify(submit),
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        },
-    })
-        .then(response => {
-            status = response.status;
-            return response.json();
-        })
-        .then(body => callback(status, body));
-}
+const searchPersonForm = document.getElementById('search-person-name-form');
+const searchPersonResultsTarget = document.getElementById('search-person-name-results-target');
+const searchPersonResults = new HtmlTable('search-person-name-results', personColumns);
+searchPersonResultsTarget.appendChild(searchPersonResults.tableElement);
 
-function appendPerson(tbody, person) {
-    const tr = document.createElement('tr');
-    personsColumns.forEach(column => {
-        const td = document.createElement('td');
-        if (column['key'] != undefined)
-            td.innerText = person[column['key']];
-        else if (column['element'] != undefined)
-            td.appendChild(column['element'](person));
-        if (column['class'] != undefined)
-            td.classList.add(column['class']);
-        tr.appendChild(td);
+searchPersonForm.addEventListener('submit', e => {
+    e.preventDefault();
+    
+    const firstName = searchPersonForm.firstName.value;
+    const lastName = searchPersonForm.lastName.value;
+    dataMapper.searchPersonsByName(firstName, lastName, (status, response) => {
+        if(status != 200){
+            error("Could not search by name.");
+            return;
+        }
+
+        searchPersonResults.populate(response);
     });
-
-    tbody.appendChild(tr);
-}
+});

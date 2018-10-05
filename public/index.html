@@ -12,13 +12,43 @@
   <div id="container">
     <h1>Krak</h1>
     <div class="col s12">
-      <ul class="tabs" id="tabs">
+      <ul class="tabs row" id="tabs">
         <li class="tab col s4" id="tab-persons"><a class="active" href="#persons">Persons</a></li>
         <li class="tab col s4" id="tab-create"><a href="#create">Create</a></li>
         <li class="tab col s4 disabled" id="tab-update"><a href="#update">Update</a></li>
       </ul>
     </div>
-    <div id="persons" class="tab-contents col s12"></div>
+    <div id="persons" class="tab-contents col s12">
+      <div class="row content-container">
+        <h2>ALL RESULTS</h2>
+        <div id="persons-table-target"></div>
+      </div>
+      <div class="row content-container">
+        <h2>Find by name</h2>
+        <form id="search-person-name-form">
+          <div class="col s5 input-field">
+            <input type="text" name="firstName" id="search-person-name-firstName">
+            <label for="search-name-firstName">First name</label>
+          </div>
+          <div class="col s5 input-field">
+            <input type="text" name="lastName" id="search-person-name-lastName">
+            <label for="search-name-lastName">Last name</label>
+          </div>
+          <div class="col s2 input-field">
+            <button style="margin-top: 10px;" class="btn next-to-input-button" id="search-person-name-button">SEARCH</button>
+          </div>
+        </form>
+        <div id="search-person-name-results-target">
+
+        </div>
+      </div>
+      <div class="row content-container">
+        <h2>Find by location</h2>
+      </div>
+      <div class="row content-container">
+        <h2>Find by hobby</h2>
+      </div>
+    </div>
     <div id="create" class="tab-contents col s12">
       <form id="create-person-form">
         <fieldset>
