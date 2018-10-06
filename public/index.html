@@ -13,13 +13,16 @@
     <h1>Krak</h1>
     <div class="col s12">
       <ul class="tabs row" id="tabs">
-        <li class="tab col s4" id="tab-persons">
+        <li class="tab col s3" id="tab-persons">
           <a class="active" href="#persons">Persons</a>
         </li>
-        <li class="tab col s4" id="tab-create">
+        <li class="tab col s3" id="tab-companies">
+          <a class="active" href="#companies">Companies</a>
+        </li>
+        <li class="tab col s3" id="tab-create">
           <a href="#create">Create</a>
         </li>
-        <li class="tab col s4 disabled" id="tab-update">
+        <li class="tab col s3 disabled" id="tab-update">
           <a href="#update">Update</a>
         </li>
       </ul>
@@ -100,6 +103,12 @@
         </div>
       </div>
     </div>
+    <div id="companies" class="tab-contents col s12">
+      <div class="row content-container">
+        <h2>ALL RESULTS</h2>
+        <div id="companies-table-target"></div>
+      </div>
+      </div>
     <div id="create" class="tab-contents col s12">
       <form id="create-person-form">
         <fieldset>

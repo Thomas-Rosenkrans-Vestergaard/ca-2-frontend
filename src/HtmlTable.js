@@ -71,7 +71,7 @@ class HtmlTable {
 
     createPaginationButtons(count) {
 
-        removePaginationButtons();
+        this.removePaginationButtons();
 
         const container = document.createElement('div');
         container.classList.add('html-table-pagination');
@@ -266,6 +266,8 @@ class HtmlTable {
                 td.innerText = row[column['key']];
             else if (column['element'] != undefined)
                 td.appendChild(column['element'](row));
+            else if (column['text'] != undefined)
+                td.innerText = column['text'](row);
             if (column['class'] != undefined)
                 td.classList.add(column['class']);
             tr.appendChild(td);

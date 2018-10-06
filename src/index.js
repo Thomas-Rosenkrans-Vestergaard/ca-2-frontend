@@ -4,11 +4,22 @@ import DataMapper from './dataMapper.js'
 const baseUrl = "http://localhost:8080/ca-2-backend/api/";
 const dataMapper = new DataMapper(baseUrl);
 const tabs = M.Tabs.getInstance(document.getElementById('tabs'));
+const companyColumns = [
+    { name: "ID", key: "id", class: "company-id" },
+    { name: "Name", key: "name", class: "company-name" },
+    { name: "CVR", key: "cvr", class: "company-cvr" },
+    { name: "Email", key: "email", class: "company-email" },
+    { name: 'Address', text: row => `${row.address.street} ${row.address.information}, ${row.address.city.name}`, class: "company-address"},
+    {name: 'Market value', key: "marketValue"},
+    {name: 'Employees', key: 'numberOfEmployees'}
+];
+
 const personColumns = [
-    { name: "ID", key: "id", class: "persons-id" },
-    { name: "First name", key: "firstName", class: "persons-firstName" },
-    { name: "Last name", key: "lastName", class: "persons-lastName" },
-    { name: "Email", key: "email", class: "persons-email" },
+    { name: "ID", key: "id", class: "person-id" },
+    { name: "First name", key: "firstName", class: "person-firstName" },
+    { name: "Last name", key: "lastName", class: "person-lastName" },
+    { name: "Email", key: "email", class: "person-email" },
+    { name: 'Address', text: row => `${row.address.street} ${row.address.information}, ${row.address.city.name}`, class: "person-address"},
     {
         name: "Delete",
         element: row => {
@@ -43,30 +54,6 @@ const personColumns = [
         }
     }
 ];
-
-const personsTable = new HtmlTable("all-persons-table", personColumns);
-personsTable.useLazyPagination(20, (page, pageSize, callback) => {
-    dataMapper.getPersonsPaginated(pageSize, page, (status, rows) => {
-        if (status != 200) {
-            error("Could not retrieve page " + page + ".");
-            return;
-        }
-
-        callback(rows);
-    })
-}, callback => {
-    dataMapper.countPersons((status, result) => {
-        if (status != 200) {
-            error("Could not count persons.");
-            return;
-        }
-
-        callback(result.count);
-    })
-});
-personsTable.usePaginationButtons();
-personsTable.page(1, 1340);
-document.getElementById("persons-table-target").appendChild(personsTable.tableContainer);
 
 function viewEditPerson(row) {
     document.getElementById('tab-update').classList.remove('disabled');
@@ -247,6 +234,39 @@ dataMapper.getCities((status, body) => {
 });
 
 /**
+ * Initialize all persons table.
+ */
+
+function personsTableLazyPaginator(page, pageSize, callback) {
+    dataMapper.getPersonsPaginated(pageSize, page, (status, rows) => {
+        if (status != 200) {
+            error("Could not retrieve page " + page + " for persons table.");
+            return;
+        }
+
+        callback(rows);
+    })
+}
+
+function personsTableCounter(callback) {
+    dataMapper.countPersons((status, result) => {
+        if (status != 200) {
+            error("Could not count persons.");
+            return;
+        }
+
+        callback(result.count);
+    });
+}
+
+const personsTableTarget = document.getElementById("persons-table-target");
+const personsTable = new HtmlTable("persons-table", personColumns);
+personsTable.useLazyPagination(20, personsTableLazyPaginator, personsTableCounter);
+personsTable.usePaginationButtons();
+personsTable.page(1, 1340);
+personsTableTarget.appendChild(personsTable.tableContainer);
+
+/**
  * Search for people by name.
  */
 
@@ -383,3 +403,36 @@ searchPersonPhoneForm.addEventListener('submit', e => {
         searchPersonPhoneResults.stopSpinner();
     });
 });
+
+/**
+ * Initialize all companies table.
+ */
+
+function companiesTableLazyPaginator(page, pageSize, callback) {
+    dataMapper.getCompaniesPaginated(pageSize, page, (status, rows) => {
+        if (status != 200) {
+            error("Could not retrieve page " + page + " for companies table.");
+            return;
+        }
+
+        callback(rows);
+    })
+}
+
+function companiesTableCounter(callback) {
+    dataMapper.countCompanies((status, result) => {
+        if (status != 200) {
+            error("Could not count companies.");
+            return;
+        }
+
+        callback(result.count);
+    });
+}
+
+const companiesTableTarget = document.getElementById("companies-table-target");
+const companiesTable = new HtmlTable("companies-table", companyColumns);
+companiesTable.useLazyPagination(20, companiesTableLazyPaginator, companiesTableCounter);
+companiesTable.usePaginationButtons();
+companiesTable.page(1, 1340);
+companiesTableTarget.appendChild(companiesTable.tableContainer);

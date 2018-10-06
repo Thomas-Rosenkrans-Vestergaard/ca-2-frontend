@@ -73,6 +73,21 @@ class DataMapper {
         this.getFetch(url, callback);
     }
 
+    countCompanies(cb){
+        const url = this.baseUrl + "companies/count";
+        this.getFetch(url, cb);
+    }
+
+    getCompanies(cb) {
+        const url = this.baseUrl + "companies";
+        this.getFetch(url, cb);
+    }
+
+    getCompaniesPaginated(pageSize, pageNumber, callback){
+        const url = this.baseUrl + 'companies/paginated/' + pageSize + '/' + pageNumber;
+        this.getFetch(url, callback);
+    }
+
     getCities(cb) {
         const url = this.baseUrl + "cities";
         this.getFetch(url, cb);
