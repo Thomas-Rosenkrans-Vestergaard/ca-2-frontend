@@ -1,59 +1,10 @@
 import HtmlTable from './HtmlTable.js';
-import DataMapper from './dataMapper.js'
+import DataMapper from './dataMapper.js';
+import Table from './Table.js';
 
 const baseUrl = "http://localhost:8080/ca-2-backend/api/";
 const dataMapper = new DataMapper(baseUrl);
 const tabs = M.Tabs.getInstance(document.getElementById('tabs'));
-const companyColumns = [
-    { name: "ID", key: "id", class: "company-id" },
-    { name: "Name", key: "name", class: "company-name" },
-    { name: "CVR", key: "cvr", class: "company-cvr" },
-    { name: "Email", key: "email", class: "company-email" },
-    { name: 'Address', text: row => `${row.address.street} ${row.address.information}, ${row.address.city.name}`, class: "company-address"},
-    {name: 'Market value', key: "marketValue"},
-    {name: 'Employees', key: 'numberOfEmployees'}
-];
-
-const personColumns = [
-    { name: "ID", key: "id", class: "person-id" },
-    { name: "First name", key: "firstName", class: "person-firstName" },
-    { name: "Last name", key: "lastName", class: "person-lastName" },
-    { name: "Email", key: "email", class: "person-email" },
-    { name: 'Address', text: row => `${row.address.street} ${row.address.information}, ${row.address.city.name}`, class: "person-address"},
-    {
-        name: "Delete",
-        element: row => {
-            const button = document.createElement('button');
-            button.innerText = 'Delete';
-            button.classList.add('btn');
-            button.addEventListener('click', e => {
-                dataMapper.deletePerson(row['id'], (status, body) => {
-                    if (status != 200) {
-                        error("Could not delete person.");
-                        return;
-                    }
-
-                    viewPersonsTable(true);
-                });
-            });
-
-            return button;
-        }
-    },
-    {
-        name: "Edit",
-        element: row => {
-            const button = document.createElement('button');
-            button.innerText = 'Edit';
-            button.classList.add('btn');
-            button.addEventListener('click', e => {
-                viewEditPerson(row);
-            });
-
-            return button;
-        }
-    }
-];
 
 function viewEditPerson(row) {
     document.getElementById('tab-update').classList.remove('disabled');
@@ -83,24 +34,6 @@ function viewEditPerson(row) {
 
     M.updateTextFields();
     view('update');
-}
-
-function viewPersonsTable(refresh) {
-    if (refresh) {
-        personsTable.startSpinner();
-        dataMapper.getPersons((status, body) => {
-            if (status != 200) {
-                error("Could not retrieve persons table.");
-                personsTable.stopSpinner();
-                return;
-            }
-
-            personsTable.populate(body);
-            personsTable.stopSpinner();
-        });
-    }
-
-    tabs.select('persons');
 }
 
 const addPhoneButton = document.getElementById('create-person-phone-add');
@@ -171,8 +104,8 @@ createPersonSubmit.addEventListener('click', e => {
             return;
         }
 
-        appendPerson(personsTable.lastChild, body);
-        viewPersonsTable(false);
+        personsTable.refresh();
+        view('persons');
     });
 });
 
@@ -234,8 +167,15 @@ dataMapper.getCities((status, body) => {
 });
 
 /**
- * Initialize all persons table.
+ * Persons table.
  */
+
+const personsTableTarget = document.getElementById("persons-table-target");
+const personsTable = new HtmlTable("persons-table", Table.person);
+personsTable.useLazyPagination(20, personsTableLazyPaginator, personsTableCounter);
+personsTable.usePaginationButtons();
+personsTable.refresh();
+personsTableTarget.appendChild(personsTable.tableContainer);
 
 function personsTableLazyPaginator(page, pageSize, callback) {
     dataMapper.getPersonsPaginated(pageSize, page, (status, rows) => {
@@ -259,43 +199,35 @@ function personsTableCounter(callback) {
     });
 }
 
-const personsTableTarget = document.getElementById("persons-table-target");
-const personsTable = new HtmlTable("persons-table", personColumns);
-personsTable.useLazyPagination(20, personsTableLazyPaginator, personsTableCounter);
-personsTable.usePaginationButtons();
-personsTable.page(1, 1340);
-personsTableTarget.appendChild(personsTable.tableContainer);
-
 /**
  * Search for people by name.
  */
 
 const searchPersonNameForm = document.getElementById('search-person-name-form');
 const searchPersonNameResultsTarget = document.getElementById('search-person-name-results-target');
-const searchPersonNameResults = new HtmlTable('search-person-name-results', personColumns);
+const searchPersonNameResults = new HtmlTable('search-person-name-results', Table.person);
 searchPersonNameResults.noResultsMessage = "No persons with the provided name.";
 searchPersonNameResults.appendMessage("Press the search button to search.");
 searchPersonNameResults.useEagerPagination(20);
 searchPersonNameResults.usePaginationButtons();
 searchPersonNameResults.startingHeight = 400;
 searchPersonNameResultsTarget.appendChild(searchPersonNameResults.tableContainer);
+searchPersonNameResults.populator = (callback) => {
 
-searchPersonNameForm.addEventListener('submit', e => {
-    e.preventDefault();
-
-    const firstName = searchPersonNameForm.firstName.value;
-    const lastName = searchPersonNameForm.lastName.value;
-    searchPersonNameResults.startSpinner();
-    dataMapper.searchPersonsByName(firstName, lastName, (status, response) => {
+    dataMapper.searchPersonsByName(searchPersonNameForm.firstName.value, searchPersonNameForm.lastName.value, (status, response) => {
         if (status != 200) {
             error("Could not search by name.");
-            searchPersonNameResults.stopSpinner();
+            callback([]);
             return;
         }
 
-        searchPersonNameResults.populate(response);
-        searchPersonNameResults.stopSpinner();
+        callback(response);
     });
+};
+
+searchPersonNameForm.addEventListener('submit', e => {
+    e.preventDefault();
+    searchPersonNameResults.refresh();
 });
 
 /**
@@ -304,7 +236,7 @@ searchPersonNameForm.addEventListener('submit', e => {
 
 const searchPersonAddressForm = document.getElementById('search-person-address-form');
 const searchPersonAddressResultsTarget = document.getElementById('search-person-address-results-target');
-const searchPersonAddressResults = new HtmlTable('search-person-address-results', personColumns);
+const searchPersonAddressResults = new HtmlTable('search-person-address-results', Table.person);
 searchPersonAddressResults.noResultsMessage = "No persons with the provided address.";
 searchPersonAddressResults.appendMessage("Press the search button to search.");
 searchPersonAddressResults.startingHeight = 400;
@@ -336,7 +268,7 @@ searchPersonAddressForm.addEventListener('submit', e => {
 
 const searchPersonHobbyForm = document.getElementById('search-person-hobby-form');
 const searchPersonHobbyResultsTarget = document.getElementById('search-person-hobby-results-target');
-const searchPersonHobbyResults = new HtmlTable('search-person-hobby-results', personColumns);
+const searchPersonHobbyResults = new HtmlTable('search-person-hobby-results', Table.person);
 searchPersonHobbyResults.noResultsMessage = "No persons with the provided hobby.";
 searchPersonHobbyResults.appendMessage("Press the search button to search.");
 searchPersonHobbyResults.startingHeight = 400;
@@ -379,7 +311,7 @@ searchPersonHobbyForm.addEventListener('submit', e => {
 
 const searchPersonPhoneForm = document.getElementById('search-person-phone-form');
 const searchPersonPhoneResultsTarget = document.getElementById('search-person-phone-results-target');
-const searchPersonPhoneResults = new HtmlTable('search-person-phone-results', personColumns);
+const searchPersonPhoneResults = new HtmlTable('search-person-phone-results', Table.person);
 searchPersonPhoneResults.noResultsMessage = "No persons with the provided phone number.";
 searchPersonPhoneResults.appendMessage("Press the search button to search.");
 searchPersonPhoneResults.startingHeight = 400;
@@ -431,7 +363,7 @@ function companiesTableCounter(callback) {
 }
 
 const companiesTableTarget = document.getElementById("companies-table-target");
-const companiesTable = new HtmlTable("companies-table", companyColumns);
+const companiesTable = new HtmlTable("companies-table", Table.company);
 companiesTable.useLazyPagination(20, companiesTableLazyPaginator, companiesTableCounter);
 companiesTable.usePaginationButtons();
 companiesTable.page(1, 1340);
@@ -443,7 +375,7 @@ companiesTableTarget.appendChild(companiesTable.tableContainer);
 
 const searchCompanySizeForm = document.getElementById('search-company-size-form');
 const searchCompanySizeResultsTarget = document.getElementById('search-company-size-results-target');
-const searchCompanySizeResults = new HtmlTable('search-company-size-results', companyColumns);
+const searchCompanySizeResults = new HtmlTable('search-company-size-results', Table.company);
 searchCompanySizeResults.noResultsMessage = "No persons matching the criteria.";
 searchCompanySizeResults.appendMessage("Press the search button to search.");
 searchCompanySizeResults.startingHeight = 400;
