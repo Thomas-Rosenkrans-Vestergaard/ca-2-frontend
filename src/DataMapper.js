@@ -5,13 +5,13 @@ class DataMapper {
     }
 
     searchPersonsByName(firstName, lastName, callback) {
-        let status = 1;
-        fetch(this.baseUrl + 'persons/first/' + firstName + '/last/' + lastName)
-            .then(response => {
-                status = response.status;
-                return response.json();
-            })
-            .then(body => callback(status, body));
+        const url = this.baseUrl + 'persons/first/' + firstName + '/last/' + lastName
+        this.getFetch(url, callback);
+    }
+
+    searchPersonsByAddress(street, city, callback){
+        const url = this.baseUrl + 'persons/street/' + street + '/city/' + city
+        this.getFetch(url, callback);
     }
 
     createPerson(person, callback) {

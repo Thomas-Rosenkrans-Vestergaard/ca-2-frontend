@@ -56,7 +56,7 @@ personsTable.useLazyPagination(20, (page, pageSize, callback) => {
     })
 }, callback => {
     dataMapper.countPersons((status, result) => {
-        if(status != 200){
+        if (status != 200) {
             error("Could not count persons.");
             return;
         }
@@ -130,7 +130,10 @@ dataMapper.getCities((status, body) => {
         return;
     }
 
-    const selects = [document.getElementById("create-person-address-city"), document.getElementById('update-person-address-city')];
+    const selects = [
+        document.getElementById('create-person-address-city'),
+        document.getElementById('update-person-address-city'),
+        document.getElementById('search-person-address-city')];
 
     selects.forEach(select => {
         body.forEach(row => {
@@ -217,29 +220,64 @@ createPersonSubmit.addEventListener('click', e => {
     });
 });
 
-const searchPersonForm = document.getElementById('search-person-name-form');
-const searchPersonResultsTarget = document.getElementById('search-person-name-results-target');
-const searchPersonResults = new HtmlTable('search-person-name-results', personColumns);
-searchPersonResults.noResultsMessage = "No persons with the provided name.";
-searchPersonResults.appendMessage("Press the search button to search.");
-searchPersonResults.useEagerPagination(20);
-searchPersonResults.usePaginationButtons();
-searchPersonResultsTarget.appendChild(searchPersonResults.tableContainer);
+/**
+ * Search for people by name.
+ */
 
-searchPersonForm.addEventListener('submit', e => {
+const searchPersonNameForm = document.getElementById('search-person-name-form');
+const searchPersonNameResultsTarget = document.getElementById('search-person-name-results-target');
+const searchPersonNameResults = new HtmlTable('search-person-name-results', personColumns);
+searchPersonNameResults.noResultsMessage = "No persons with the provided name.";
+searchPersonNameResults.appendMessage("Press the search button to search.");
+searchPersonNameResults.useEagerPagination(20);
+searchPersonNameResults.usePaginationButtons();
+searchPersonNameResultsTarget.appendChild(searchPersonNameResults.tableContainer);
+
+searchPersonNameForm.addEventListener('submit', e => {
     e.preventDefault();
 
-    const firstName = searchPersonForm.firstName.value;
-    const lastName = searchPersonForm.lastName.value;
-    searchPersonResults.startSpinner();
+    const firstName = searchPersonNameForm.firstName.value;
+    const lastName = searchPersonNameForm.lastName.value;
+    searchPersonNameResults.startSpinner();
     dataMapper.searchPersonsByName(firstName, lastName, (status, response) => {
         if (status != 200) {
             error("Could not search by name.");
-            searchPersonResults.stopSpinner();
+            searchPersonNameResults.stopSpinner();
             return;
         }
 
-        searchPersonResults.populate(response);
-        searchPersonResults.stopSpinner();
+        searchPersonNameResults.populate(response);
+        searchPersonNameResults.stopSpinner();
+    });
+});
+
+/**
+ * Search for people by address.
+ */
+
+const searchPersonAddressForm = document.getElementById('search-person-address-form');
+const searchPersonAddressResultsTarget = document.getElementById('search-person-address-results-target');
+const searchPersonAddressResults = new HtmlTable('search-person-address-results', personColumns);
+searchPersonAddressResults.noResultsMessage = "No persons with the provided address.";
+searchPersonAddressResults.appendMessage("Press the search button to search.");
+searchPersonAddressResults.useEagerPagination(20);
+searchPersonAddressResults.usePaginationButtons();
+searchPersonAddressResultsTarget.appendChild(searchPersonAddressResults.tableContainer);
+
+searchPersonAddressForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const street = searchPersonAddressForm.street.value;
+    const city = searchPersonAddressForm.city.value;
+    searchPersonAddressResults.startSpinner();
+    dataMapper.searchPersonsByAddress(street, city, (status, response) => {
+        if (status != 200) {
+            error("Could not search by address.");
+            searchPersonAddressResults.stopSpinner();
+            return;
+        }
+
+        searchPersonAddressResults.populate(response);
+        searchPersonAddressResults.stopSpinner();
     });
 });

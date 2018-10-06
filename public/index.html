@@ -24,7 +24,7 @@
         <div id="persons-table-target"></div>
       </div>
       <div class="row content-container">
-        <h2>Find by name</h2>
+        <h2>Search by name</h2>
         <form id="search-person-name-form">
           <div class="col s5 input-field">
             <input type="text" name="firstName" id="search-person-name-firstName">
@@ -43,10 +43,28 @@
         </div>
       </div>
       <div class="row content-container">
-        <h2>Find by location</h2>
+        <h2>Search by address</h2>
+        <form id="search-person-address-form">
+          <div class="col s5 input-field">
+            <input type="text" name="street" id="search-person-address-street">
+            <label for="search-address-street">Street</label>
+          </div>
+          <div class="col s5 input-field">
+            <select id="search-person-address-city" name="city">
+              <option value="" selected>City</option>
+            </select>
+          <label for="search-person-address-city">City</label>
+          </div>
+          <div class="col s2 input-field">
+            <button style="margin-top: 10px;" class="btn next-to-input-button" id="search-person-address-button">SEARCH</button>
+          </div>
+        </form>
+        <div id="search-person-address-results-target">
+
+        </div>
       </div>
       <div class="row content-container">
-        <h2>Find by hobby</h2>
+        <h2>Search by hobby</h2>
       </div>
     </div>
     <div id="create" class="tab-contents col s12">
