@@ -220,6 +220,14 @@ createPersonSubmit.addEventListener('click', e => {
     });
 });
 
+function addOption(value, text, select){
+    const option = document.createElement('option');
+    option.value = value;
+    option.innerText = text;
+    select.appendChild(option);
+    return option;
+}
+
 /**
  * Search for people by name.
  */
@@ -231,6 +239,7 @@ searchPersonNameResults.noResultsMessage = "No persons with the provided name.";
 searchPersonNameResults.appendMessage("Press the search button to search.");
 searchPersonNameResults.useEagerPagination(20);
 searchPersonNameResults.usePaginationButtons();
+searchPersonNameResults.startingHeight = 400;
 searchPersonNameResultsTarget.appendChild(searchPersonNameResults.tableContainer);
 
 searchPersonNameForm.addEventListener('submit', e => {
@@ -260,6 +269,7 @@ const searchPersonAddressResultsTarget = document.getElementById('search-person-
 const searchPersonAddressResults = new HtmlTable('search-person-address-results', personColumns);
 searchPersonAddressResults.noResultsMessage = "No persons with the provided address.";
 searchPersonAddressResults.appendMessage("Press the search button to search.");
+searchPersonAddressResults.startingHeight = 400;
 searchPersonAddressResults.useEagerPagination(20);
 searchPersonAddressResults.usePaginationButtons();
 searchPersonAddressResultsTarget.appendChild(searchPersonAddressResults.tableContainer);
@@ -279,5 +289,48 @@ searchPersonAddressForm.addEventListener('submit', e => {
 
         searchPersonAddressResults.populate(response);
         searchPersonAddressResults.stopSpinner();
+    });
+});
+
+/**
+ * Search for people by hobby.
+ */
+
+const searchPersonHobbyForm = document.getElementById('search-person-hobby-form');
+const searchPersonHobbyResultsTarget = document.getElementById('search-person-hobby-results-target');
+const searchPersonHobbyResults = new HtmlTable('search-person-hobby-results', personColumns);
+searchPersonHobbyResults.noResultsMessage = "No persons with the provided hobby.";
+searchPersonHobbyResults.appendMessage("Press the search button to search.");
+searchPersonHobbyResults.startingHeight = 400;
+searchPersonHobbyResults.useEagerPagination(20);
+searchPersonHobbyResults.usePaginationButtons();
+searchPersonHobbyResultsTarget.appendChild(searchPersonHobbyResults.tableContainer);
+
+// Init hobby select
+const searchPersonHobbySelect = document.getElementById('search-person-hobby');
+dataMapper.getHobbies((status, response) => {
+    if(status != 200){
+        error('Could not retrieve hobbies.');
+        return;
+    }
+
+    response.forEach(hobby => addOption(hobby.id, hobby.name, searchPersonHobbySelect));
+    M.FormSelect.init(searchPersonHobbySelect);
+});
+
+searchPersonHobbyForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const hobbyId = searchPersonHobbyForm.hobby.value;
+    searchPersonHobbyResults.startSpinner();
+    dataMapper.searchPersonsByHobby(hobbyId, (status, response) => {
+        if (status != 200) {
+            error("Could not search by hobby.");
+            searchPersonHobbyResults.stopSpinner();
+            return;
+        }
+
+        searchPersonHobbyResults.populate(response);
+        searchPersonHobbyResults.stopSpinner();
     });
 });

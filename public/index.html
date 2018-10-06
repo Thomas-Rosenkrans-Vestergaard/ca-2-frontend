@@ -13,9 +13,15 @@
     <h1>Krak</h1>
     <div class="col s12">
       <ul class="tabs row" id="tabs">
-        <li class="tab col s4" id="tab-persons"><a class="active" href="#persons">Persons</a></li>
-        <li class="tab col s4" id="tab-create"><a href="#create">Create</a></li>
-        <li class="tab col s4 disabled" id="tab-update"><a href="#update">Update</a></li>
+        <li class="tab col s4" id="tab-persons">
+          <a class="active" href="#persons">Persons</a>
+        </li>
+        <li class="tab col s4" id="tab-create">
+          <a href="#create">Create</a>
+        </li>
+        <li class="tab col s4 disabled" id="tab-update">
+          <a href="#update">Update</a>
+        </li>
       </ul>
     </div>
     <div id="persons" class="tab-contents col s12">
@@ -53,7 +59,7 @@
             <select id="search-person-address-city" name="city">
               <option value="" selected>City</option>
             </select>
-          <label for="search-person-address-city">City</label>
+            <label for="search-person-address-city">City</label>
           </div>
           <div class="col s2 input-field">
             <button style="margin-top: 10px;" class="btn next-to-input-button" id="search-person-address-button">SEARCH</button>
@@ -65,6 +71,18 @@
       </div>
       <div class="row content-container">
         <h2>Search by hobby</h2>
+        <form id="search-person-hobby-form">
+          <div class="col s10 input-field">
+            <select id="search-person-hobby" name="hobby"></select>
+            <label for="search-person-hobby-city">Hobby</label>
+          </div>
+          <div class="col s2 input-field">
+            <button style="margin-top: 10px;" class="btn next-to-input-button" id="search-person-hobby-button">SEARCH</button>
+          </div>
+        </form>
+        <div id="search-person-hobby-results-target">
+
+        </div>
       </div>
     </div>
     <div id="create" class="tab-contents col s12">
@@ -100,7 +118,6 @@
           </div>
           <div class="row">
             <div class="col s12 input-field">
-
               <input type="text" name="email" id="create-person-address-information">
               <label for="create-person-address-information">Information</label>
             </div>
@@ -108,8 +125,8 @@
           <div class="row">
             <div class="col s12 input-field">
               <select id="create-person-address-city">
-                  <option value="" disabled selected>City</option>
-                </select>
+                <option value="" disabled selected>City</option>
+              </select>
               <label for="create-person-address-city">City</label>
             </div>
           </div>
@@ -193,8 +210,8 @@
           <div class="row">
             <div class="col s12 input-field">
               <select id="update-person-address-city">
-                  <option value="" disabled selected>City</option>
-                </select>
+                <option value="" disabled selected>City</option>
+              </select>
               <label for="update-person-address-city">City</label>
             </div>
           </div>

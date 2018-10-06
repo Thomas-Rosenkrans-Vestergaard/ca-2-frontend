@@ -14,6 +14,16 @@ class DataMapper {
         this.getFetch(url, callback);
     }
 
+    searchPersonsByHobby(hobbySlug, callback){
+        const url = this.baseUrl + 'persons/hobby/' + hobbySlug
+        this.getFetch(url, callback);
+    }
+
+    getHobbies(callback){
+        const url = this.baseUrl + 'hobbies';
+        this.getFetch(url, callback);
+    }
+
     createPerson(person, callback) {
         const url = this.baseUrl + "persons";
         let status = -1;

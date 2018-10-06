@@ -121,6 +121,10 @@ class HtmlTable {
         return this._tableOuterContainer;
     }
 
+    set startingHeight(startingHeight) {
+        this._tableInnerContainer.style.minHeight = this.absolutePosition(this._tableHead).height + startingHeight + 'px';
+    }
+
     createOuterContainer() {
         const div = document.createElement('div');
         div.classList.add('html-table-outer-container');
