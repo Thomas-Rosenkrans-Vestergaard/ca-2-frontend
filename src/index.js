@@ -220,7 +220,7 @@ createPersonSubmit.addEventListener('click', e => {
     });
 });
 
-function addOption(value, text, select){
+function addOption(value, text, select) {
     const option = document.createElement('option');
     option.value = value;
     option.innerText = text;
@@ -309,7 +309,7 @@ searchPersonHobbyResultsTarget.appendChild(searchPersonHobbyResults.tableContain
 // Init hobby select
 const searchPersonHobbySelect = document.getElementById('search-person-hobby');
 dataMapper.getHobbies((status, response) => {
-    if(status != 200){
+    if (status != 200) {
         error('Could not retrieve hobbies.');
         return;
     }
@@ -332,5 +332,36 @@ searchPersonHobbyForm.addEventListener('submit', e => {
 
         searchPersonHobbyResults.populate(response);
         searchPersonHobbyResults.stopSpinner();
+    });
+});
+
+/*
+ * Search by phone number
+ */
+
+const searchPersonPhoneForm = document.getElementById('search-person-phone-form');
+const searchPersonPhoneResultsTarget = document.getElementById('search-person-phone-results-target');
+const searchPersonPhoneResults = new HtmlTable('search-person-phone-results', personColumns);
+searchPersonPhoneResults.noResultsMessage = "No persons with the provided phone number.";
+searchPersonPhoneResults.appendMessage("Press the search button to search.");
+searchPersonPhoneResults.startingHeight = 400;
+searchPersonPhoneResults.useEagerPagination(20);
+searchPersonPhoneResults.usePaginationButtons();
+searchPersonPhoneResultsTarget.appendChild(searchPersonPhoneResults.tableContainer);
+
+searchPersonPhoneForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const phone = searchPersonPhoneForm.phone.value;
+    searchPersonPhoneResults.startSpinner();
+    dataMapper.searchPersonsByPhone(phone, (status, response) => {
+        if (status != 200) {
+            error("Could not search by phone.");
+            searchPersonPhoneResults.stopSpinner();
+            return;
+        }
+
+        searchPersonPhoneResults.populate(response);
+        searchPersonPhoneResults.stopSpinner();
     });
 });

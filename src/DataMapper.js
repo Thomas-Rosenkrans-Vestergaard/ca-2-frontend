@@ -19,6 +19,11 @@ class DataMapper {
         this.getFetch(url, callback);
     }
 
+    searchPersonsByPhone(phoneNumber, callback){
+        const url = this.baseUrl + 'persons/phone/' + phoneNumber
+        this.getFetch(url, callback);
+    }
+
     getHobbies(callback){
         const url = this.baseUrl + 'hobbies';
         this.getFetch(url, callback);

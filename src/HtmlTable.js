@@ -62,12 +62,16 @@ class HtmlTable {
             });
     }
 
-    createPaginationButtons(count) {
-
+    removePaginationButtons(){
         if (this._paginationButtonsContainer != undefined) {
             this._tableOuterContainer.removeChild(this._paginationButtonsContainer);
             this._paginationButtonsContainer = undefined;
         }
+    }
+
+    createPaginationButtons(count) {
+
+        removePaginationButtons();
 
         const container = document.createElement('div');
         container.classList.add('html-table-pagination');
@@ -194,8 +198,12 @@ class HtmlTable {
 
     populateWithPagination(rows) {
         this._eagerPaginationRows = rows;
-        if (this._usePaginationButtons)
-            this.createPaginationButtons(rows.length);
+        if (this._usePaginationButtons) {
+            if (rows.length > this._paginationConfig.pageSize)
+                this.createPaginationButtons(rows.length);
+            else 
+                this.removePaginationButtons();
+        }
         if (this._paginationConfig['mode'] == 'eager')
             this.appendRows(rows.slice(0, this._paginationConfig.pageSize));
     }
