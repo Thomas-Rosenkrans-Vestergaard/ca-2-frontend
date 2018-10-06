@@ -68,10 +68,6 @@ personsTable.usePaginationButtons();
 personsTable.page(1, 1340);
 document.getElementById("persons-table-target").appendChild(personsTable.tableContainer);
 
-function view(page) {
-    tabs.select(page);
-}
-
 function viewEditPerson(row) {
     document.getElementById('tab-update').classList.remove('disabled');
     document.getElementById('update-person-firstName').value = row['firstName'];
@@ -102,10 +98,6 @@ function viewEditPerson(row) {
     view('update');
 }
 
-function error(message) {
-    M.toast({ 'html': message });
-}
-
 function viewPersonsTable(refresh) {
     if (refresh) {
         personsTable.startSpinner();
@@ -123,29 +115,6 @@ function viewPersonsTable(refresh) {
 
     tabs.select('persons');
 }
-
-dataMapper.getCities((status, body) => {
-    if (status != 200) {
-        error("Could not retrieve cities.");
-        return;
-    }
-
-    const selects = [
-        document.getElementById('create-person-address-city'),
-        document.getElementById('update-person-address-city'),
-        document.getElementById('search-person-address-city')];
-
-    selects.forEach(select => {
-        body.forEach(row => {
-            const option = document.createElement("option");
-            option.value = row['id'];
-            option.innerText = row['zipCode'] + ' ' + row['name'];
-            select.appendChild(option);
-        });
-
-        M.FormSelect.init(select);
-    });
-})
 
 const addPhoneButton = document.getElementById('create-person-phone-add');
 const phoneNumbersTable = document.getElementById('create-person-phones');
@@ -220,6 +189,12 @@ createPersonSubmit.addEventListener('click', e => {
     });
 });
 
+/**
+ * Adds an option with the provided value and text to the provided select.
+ * @param {*} value The value the option to create.
+ * @param {*} text  The text value in the option to create.
+ * @param {*} select The select element to append options to.
+ */
 function addOption(value, text, select) {
     const option = document.createElement('option');
     option.value = value;
@@ -227,6 +202,49 @@ function addOption(value, text, select) {
     select.appendChild(option);
     return option;
 }
+
+/**
+ * Displays the provided message to the user.
+ * @param string message The message to display to the user.
+ */
+function error(message) {
+    M.toast({ 'html': message });
+}
+
+/**
+ * Switches to the tab with the provided name.
+ * @param string page The name of the tab to display.
+ */
+function view(page) {
+    tabs.select(page);
+}
+
+/*
+ * Retrieves and fills in city select elements. 
+ */
+
+dataMapper.getCities((status, body) => {
+    if (status != 200) {
+        error("Could not retrieve cities.");
+        return;
+    }
+
+    const selects = [
+        document.getElementById('create-person-address-city'),
+        document.getElementById('update-person-address-city'),
+        document.getElementById('search-person-address-city')];
+
+    selects.forEach(select => {
+        body.forEach(row => {
+            const option = document.createElement("option");
+            option.value = row['id'];
+            option.innerText = row['zipCode'] + ' ' + row['name'];
+            select.appendChild(option);
+        });
+
+        M.FormSelect.init(select);
+    });
+});
 
 /**
  * Search for people by name.
