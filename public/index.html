@@ -91,7 +91,8 @@
         <h2>Search by phone</h2>
         <form id="search-person-phone-form">
           <div class="col s10 input-field">
-            <input type='text' id="search-person-phone" name="phone"></select>
+            <input type='text' id="search-person-phone" name="phone">
+            </select>
             <label for="search-person-phone">Phone number</label>
           </div>
           <div class="col s2 input-field">
@@ -108,7 +109,38 @@
         <h2>ALL RESULTS</h2>
         <div id="companies-table-target"></div>
       </div>
+      <div class="row content-container">
+        <h2>Search by size</h2>
+        <form id="search-company-size-form">
+          <div class="col s3 input-field">
+            <input type='number' min="0" id="search-company-size-mv-min" name="minMarketValue">
+            </select>
+            <label for="search-company-size-mv-min">Minimum market value</label>
+          </div>
+          <div class="col s3 input-field">
+            <input type='number' min="0" id="search-company-size-mv-max" name="maxMarketValue">
+            </select>
+            <label for="search-company-size-mv-max">Maximum market value</label>
+          </div>
+          <div class="col s2 input-field">
+            <input type='number' min="0" id="search-company-size-employees-min" name="minEmployees">
+            </select>
+            <label for="search-company-size-employees-min">Minimum employees</label>
+          </div>
+          <div class="col s2 input-field">
+            <input type='number' min="0" id="search-company-size-employees-max" name="maxEmployees">
+            </select>
+            <label for="search-company-size-employees-max">Maximum employees</label>
+          </div>
+          <div class="col s2 input-field">
+            <button style="margin-top: 10px;" class="btn next-to-input-button" id="search-company-size-button">SEARCH</button>
+          </div>
+        </form>
+        <div id="search-company-size-results-target">
+
+        </div>
       </div>
+    </div>
     <div id="create" class="tab-contents col s12">
       <form id="create-person-form">
         <fieldset>

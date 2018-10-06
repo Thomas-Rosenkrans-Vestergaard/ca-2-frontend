@@ -331,7 +331,7 @@ searchPersonAddressForm.addEventListener('submit', e => {
 });
 
 /**
- * Search for people by hobby.
+ * Search for person by hobby.
  */
 
 const searchPersonHobbyForm = document.getElementById('search-person-hobby-form');
@@ -374,7 +374,7 @@ searchPersonHobbyForm.addEventListener('submit', e => {
 });
 
 /*
- * Search by phone number
+ * Search for person by phone number
  */
 
 const searchPersonPhoneForm = document.getElementById('search-person-phone-form');
@@ -436,3 +436,37 @@ companiesTable.useLazyPagination(20, companiesTableLazyPaginator, companiesTable
 companiesTable.usePaginationButtons();
 companiesTable.page(1, 1340);
 companiesTableTarget.appendChild(companiesTable.tableContainer);
+
+/**
+ * Search for company by size
+ */
+
+const searchCompanySizeForm = document.getElementById('search-company-size-form');
+const searchCompanySizeResultsTarget = document.getElementById('search-company-size-results-target');
+const searchCompanySizeResults = new HtmlTable('search-company-size-results', companyColumns);
+searchCompanySizeResults.noResultsMessage = "No persons matching the criteria.";
+searchCompanySizeResults.appendMessage("Press the search button to search.");
+searchCompanySizeResults.startingHeight = 400;
+searchCompanySizeResults.useEagerPagination(20);
+searchCompanySizeResults.usePaginationButtons();
+searchCompanySizeResultsTarget.appendChild(searchCompanySizeResults.tableContainer);
+
+searchCompanySizeForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const minMarketValue = searchCompanySizeForm.minMarketValue.value;
+    const maxMarketValue = searchCompanySizeForm.maxMarketValue.value;
+    const minEmployees = searchCompanySizeForm.minEmployees.value;
+    const maxEmployees = searchCompanySizeForm.maxEmployees.value;
+    searchCompanySizeResults.startSpinner();
+    dataMapper.searchCompaniesBySize(minMarketValue, maxMarketValue, minEmployees, maxEmployees, (status, response) => {
+        if (status != 200) {
+            error("Could not search by size.");
+            searchCompanySizeResults.stopSpinner();
+            return;
+        }
+
+        searchCompanySizeResults.populate(response);
+        searchCompanySizeResults.stopSpinner();
+    });
+});

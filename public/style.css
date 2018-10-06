@@ -57,6 +57,7 @@ h1 {
 
 .content-container form {
   margin: 0 -0.75rem;
+  overflow:auto;
 }
 
 ul.pagination li {

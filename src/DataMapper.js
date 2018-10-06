@@ -83,6 +83,11 @@ class DataMapper {
         this.getFetch(url, cb);
     }
 
+    searchCompaniesBySize(minMarketValue, maxMarketValue, minEmployees, maxEmployees, cb){
+        const url = this.baseUrl + `companies/size/${minMarketValue}/${maxMarketValue}/${minEmployees}/${maxEmployees}`;
+        this.getFetch(url, cb);
+    }
+
     getCompaniesPaginated(pageSize, pageNumber, callback){
         const url = this.baseUrl + 'companies/paginated/' + pageSize + '/' + pageNumber;
         this.getFetch(url, callback);
