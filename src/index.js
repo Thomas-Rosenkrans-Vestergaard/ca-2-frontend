@@ -222,7 +222,7 @@ dataMapper.getCities((status, body) => {
 
 const personsTableTarget = document.getElementById("persons-table-target");
 const personsTable = new HtmlTable("persons-table", personColumns);
-personsTable.startingHeight = 1340;
+personsTable.setStartingHeight(1340);
 personsTable.useLazyPagination(20, personsTableLazyPaginator, personsTableCounter);
 personsTable.usePaginationButtons();
 personsTable.appendTo(personsTableTarget);
@@ -261,8 +261,8 @@ searchPersonNameResults.noResultsMessage = "No persons with the provided name.";
 searchPersonNameResults.appendMessage("Press the search button to search.");
 searchPersonNameResults.useEagerPagination(20);
 searchPersonNameResults.usePaginationButtons();
-searchPersonNameResults.startingHeight = 400;
-searchPersonNameResultsTarget.appendChild(searchPersonNameResults.tableContainer);
+searchPersonNameResults.setStartingHeight(400);
+searchPersonNameResults.appendTo(searchPersonNameResultsTarget);
 searchPersonNameResults.populator = (callback) => {
 
     dataMapper.searchPersonsByName(searchPersonNameForm.firstName.value, searchPersonNameForm.lastName.value, (status, response) => {
@@ -290,27 +290,25 @@ const searchPersonAddressResultsTarget = document.getElementById('search-person-
 const searchPersonAddressResults = new HtmlTable('search-person-address-results', personColumns);
 searchPersonAddressResults.noResultsMessage = "No persons with the provided address.";
 searchPersonAddressResults.appendMessage("Press the search button to search.");
-searchPersonAddressResults.startingHeight = 400;
+searchPersonAddressResults.setStartingHeight(400);
 searchPersonAddressResults.useEagerPagination(20);
 searchPersonAddressResults.usePaginationButtons();
 searchPersonAddressResults.appendTo(searchPersonAddressResultsTarget);
-
-searchPersonAddressForm.addEventListener('submit', e => {
-    e.preventDefault();
-
-    const street = searchPersonAddressForm.street.value;
-    const city = searchPersonAddressForm.city.value;
-    searchPersonAddressResults.startSpinner();
-    dataMapper.searchPersonsByAddress(street, city, (status, response) => {
+searchPersonAddressResults.populator = (callback) => {
+    dataMapper.searchPersonsByAddress(searchPersonAddressForm.street.value, searchPersonAddressForm.city.value, (status, response) => {
         if (status != 200) {
             error("Could not search by address.");
-            searchPersonAddressResults.stopSpinner();
+            callback([]);
             return;
         }
 
-        searchPersonAddressResults.populate(response);
-        searchPersonAddressResults.stopSpinner();
+        callback(response);
     });
+};
+
+searchPersonAddressForm.addEventListener('submit', e => {
+    e.preventDefault();
+    searchPersonAddressResults.refresh();
 });
 
 /**
@@ -322,7 +320,7 @@ const searchPersonHobbyResultsTarget = document.getElementById('search-person-ho
 const searchPersonHobbyResults = new HtmlTable('search-person-hobby-results', personColumns);
 searchPersonHobbyResults.noResultsMessage = "No persons with the provided hobby.";
 searchPersonHobbyResults.appendMessage("Press the search button to search.");
-searchPersonHobbyResults.startingHeight = 400;
+searchPersonHobbyResults.setStartingHeight(400);
 searchPersonHobbyResults.useEagerPagination(20);
 searchPersonHobbyResults.usePaginationButtons();
 searchPersonHobbyResults.appendTo(searchPersonHobbyResultsTarget);
@@ -339,21 +337,23 @@ dataMapper.getHobbies((status, response) => {
     M.FormSelect.init(searchPersonHobbySelect);
 });
 
-searchPersonHobbyForm.addEventListener('submit', e => {
-    e.preventDefault();
-
+searchPersonHobbyResults.populator = (callback) => {
     const hobbyId = searchPersonHobbyForm.hobby.value;
-    searchPersonHobbyResults.startSpinner();
+    
     dataMapper.searchPersonsByHobby(hobbyId, (status, response) => {
         if (status != 200) {
             error("Could not search by hobby.");
-            searchPersonHobbyResults.stopSpinner();
+            callback([]);
             return;
         }
 
-        searchPersonHobbyResults.populate(response);
-        searchPersonHobbyResults.stopSpinner();
+        callback(response);
     });
+};
+
+searchPersonHobbyForm.addEventListener('submit', e => {
+    e.preventDefault();
+    searchPersonHobbyResults.refresh();
 });
 
 /*
@@ -365,26 +365,26 @@ const searchPersonPhoneResultsTarget = document.getElementById('search-person-ph
 const searchPersonPhoneResults = new HtmlTable('search-person-phone-results', personColumns);
 searchPersonPhoneResults.noResultsMessage = "No persons with the provided phone number.";
 searchPersonPhoneResults.appendMessage("Press the search button to search.");
-searchPersonPhoneResults.startingHeight = 400;
+searchPersonPhoneResults.setStartingHeight(400);
 searchPersonPhoneResults.useEagerPagination(20);
 searchPersonPhoneResults.usePaginationButtons();
 searchPersonPhoneResults.appendTo(searchPersonPhoneResultsTarget);
-
-searchPersonPhoneForm.addEventListener('submit', e => {
-    e.preventDefault();
-
+searchPersonPhoneResults.populator = (callback) => {
     const phone = searchPersonPhoneForm.phone.value;
-    searchPersonPhoneResults.startSpinner();
     dataMapper.searchPersonsByPhone(phone, (status, response) => {
         if (status != 200) {
             error("Could not search by phone.");
-            searchPersonPhoneResults.stopSpinner();
+            callback([]);
             return;
         }
 
-        searchPersonPhoneResults.populate(response);
-        searchPersonPhoneResults.stopSpinner();
+        callback(response);
     });
+};
+
+searchPersonPhoneForm.addEventListener('submit', e => {
+    e.preventDefault();
+    searchPersonPhoneResults.refresh();
 });
 
 /**
@@ -416,6 +416,7 @@ function companiesTableCounter(callback) {
 const companiesTableTarget = document.getElementById("companies-table-target");
 const companiesTable = new HtmlTable("companies-table", companyColumns);
 companiesTable.useLazyPagination(20, companiesTableLazyPaginator, companiesTableCounter);
+companiesTable.setStartingHeight(1040);
 companiesTable.usePaginationButtons();
 companiesTable.appendTo(companiesTableTarget);
 companiesTable.refresh();
@@ -429,27 +430,27 @@ const searchCompanySizeResultsTarget = document.getElementById('search-company-s
 const searchCompanySizeResults = new HtmlTable('search-company-size-results', companyColumns);
 searchCompanySizeResults.noResultsMessage = "No persons matching the criteria.";
 searchCompanySizeResults.appendMessage("Press the search button to search.");
-searchCompanySizeResults.startingHeight = 400;
+searchCompanySizeResults.setStartingHeight(400);
 searchCompanySizeResults.useEagerPagination(20);
 searchCompanySizeResults.usePaginationButtons();
 searchCompanySizeResults.appendTo(searchCompanySizeResultsTarget);
-
-searchCompanySizeForm.addEventListener('submit', e => {
-    e.preventDefault();
-
+searchCompanySizeResults.populator = (callback) => {
     const minMarketValue = searchCompanySizeForm.minMarketValue.value;
     const maxMarketValue = searchCompanySizeForm.maxMarketValue.value;
     const minEmployees = searchCompanySizeForm.minEmployees.value;
     const maxEmployees = searchCompanySizeForm.maxEmployees.value;
-    searchCompanySizeResults.startSpinner();
     dataMapper.searchCompaniesBySize(minMarketValue, maxMarketValue, minEmployees, maxEmployees, (status, response) => {
         if (status != 200) {
             error("Could not search by size.");
-            searchCompanySizeResults.stopSpinner();
+            callback([]);
             return;
         }
 
-        searchCompanySizeResults.populate(response);
-        searchCompanySizeResults.stopSpinner();
+        callback(response);
     });
+};
+
+searchCompanySizeForm.addEventListener('submit', e => {
+    e.preventDefault();
+    searchCompanySizeResults.refresh();
 });

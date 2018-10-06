@@ -138,6 +138,13 @@ class HtmlTable {
     }
 
     /**
+     * Sets the starting height of the body in pixels.
+     */
+    setStartingHeight(startingHeight) {
+        this.startingHeight = startingHeight;
+    }
+
+    /**
      * Creates the outmost container of this HtmlTable.
      */
     createOuterContainer() {
