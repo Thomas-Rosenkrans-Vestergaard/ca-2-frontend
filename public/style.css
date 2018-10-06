@@ -43,6 +43,8 @@ fieldset legend {
 
 h1 {
   text-align: center;
+  font-size: 5rem;
+  text-transform: uppercase;
 }
 
 .content-container {
@@ -50,14 +52,20 @@ h1 {
 }
 
 .content-container h2 {
-  font-size: 1rem;
   text-transform: uppercase;
-  font-weight: bold;
 }
 
 .content-container form {
   margin: 0 -0.75rem;
   overflow:auto;
+}
+
+table tbody tr:last-of-type {
+  border: none;
+}
+
+ul.pagination {
+  margin-top: 30px;
 }
 
 ul.pagination li {
