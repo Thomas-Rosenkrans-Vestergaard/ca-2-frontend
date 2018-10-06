@@ -66,3 +66,22 @@ ul.pagination li {
   margin-bottom: 10px;
   min-width: 40px;
 }
+
+.html-table-inner-container thead {
+  background: #fff;
+}
+
+.html-table-inner-container.loading {
+  animation-name: color;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes color {
+  0% {
+    background-color: #fff;
+  }
+  50% {
+    background-color: #a0e5df
+  }
+}

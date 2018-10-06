@@ -1,6 +1,56 @@
 import HtmlTable from './HtmlTable.js';
 import DataMapper from './dataMapper.js';
-import Table from './Table.js';
+
+const companyColumns = [
+    { name: "ID", key: "id", class: "company-id" },
+    { name: "Name", key: "name", class: "company-name" },
+    { name: "CVR", key: "cvr", class: "company-cvr" },
+    { name: "Email", key: "email", class: "company-email" },
+    { name: 'Address', text: row => `${row.address.street} ${row.address.information}, ${row.address.city.name}`, class: "company-address" },
+    { name: 'Market value', key: "marketValue" },
+    { name: 'Employees', key: 'numberOfEmployees' }
+];
+const personColumns = [
+    { name: "ID", key: "id", class: "person-id" },
+    { name: "First name", key: "firstName", class: "person-firstName" },
+    { name: "Last name", key: "lastName", class: "person-lastName" },
+    { name: "Email", key: "email", class: "person-email" },
+    { name: 'Address', text: row => row.address == undefined ? '' : `${row.address.street} ${row.address.information}, ${row.address.city.name}`, class: "person-address" },
+    {
+        name: "Delete",
+        element: row => {
+            const button = document.createElement('button');
+            button.innerText = 'Delete';
+            button.classList.add('btn');
+            button.addEventListener('click', e => {
+                dataMapper.deletePerson(row['id'], (status, body) => {
+                    if (status != 200) {
+                        error("Could not delete person.");
+                        return;
+                    }
+
+                    personsTable.refresh();
+                    view('persons');
+                });
+            });
+
+            return button;
+        }
+    },
+    {
+        name: "Edit",
+        element: row => {
+            const button = document.createElement('button');
+            button.innerText = 'Edit';
+            button.classList.add('btn');
+            button.addEventListener('click', e => {
+                viewEditPerson(row);
+            });
+
+            return button;
+        }
+    }
+];
 
 const baseUrl = "http://localhost:8080/ca-2-backend/api/";
 const dataMapper = new DataMapper(baseUrl);
@@ -171,11 +221,12 @@ dataMapper.getCities((status, body) => {
  */
 
 const personsTableTarget = document.getElementById("persons-table-target");
-const personsTable = new HtmlTable("persons-table", Table.person);
+const personsTable = new HtmlTable("persons-table", personColumns);
+personsTable.startingHeight = 1340;
 personsTable.useLazyPagination(20, personsTableLazyPaginator, personsTableCounter);
 personsTable.usePaginationButtons();
+personsTable.appendTo(personsTableTarget);
 personsTable.refresh();
-personsTableTarget.appendChild(personsTable.tableContainer);
 
 function personsTableLazyPaginator(page, pageSize, callback) {
     dataMapper.getPersonsPaginated(pageSize, page, (status, rows) => {
@@ -205,7 +256,7 @@ function personsTableCounter(callback) {
 
 const searchPersonNameForm = document.getElementById('search-person-name-form');
 const searchPersonNameResultsTarget = document.getElementById('search-person-name-results-target');
-const searchPersonNameResults = new HtmlTable('search-person-name-results', Table.person);
+const searchPersonNameResults = new HtmlTable('search-person-name-results', personColumns);
 searchPersonNameResults.noResultsMessage = "No persons with the provided name.";
 searchPersonNameResults.appendMessage("Press the search button to search.");
 searchPersonNameResults.useEagerPagination(20);
@@ -236,13 +287,13 @@ searchPersonNameForm.addEventListener('submit', e => {
 
 const searchPersonAddressForm = document.getElementById('search-person-address-form');
 const searchPersonAddressResultsTarget = document.getElementById('search-person-address-results-target');
-const searchPersonAddressResults = new HtmlTable('search-person-address-results', Table.person);
+const searchPersonAddressResults = new HtmlTable('search-person-address-results', personColumns);
 searchPersonAddressResults.noResultsMessage = "No persons with the provided address.";
 searchPersonAddressResults.appendMessage("Press the search button to search.");
 searchPersonAddressResults.startingHeight = 400;
 searchPersonAddressResults.useEagerPagination(20);
 searchPersonAddressResults.usePaginationButtons();
-searchPersonAddressResultsTarget.appendChild(searchPersonAddressResults.tableContainer);
+searchPersonAddressResults.appendTo(searchPersonAddressResultsTarget);
 
 searchPersonAddressForm.addEventListener('submit', e => {
     e.preventDefault();
@@ -268,13 +319,13 @@ searchPersonAddressForm.addEventListener('submit', e => {
 
 const searchPersonHobbyForm = document.getElementById('search-person-hobby-form');
 const searchPersonHobbyResultsTarget = document.getElementById('search-person-hobby-results-target');
-const searchPersonHobbyResults = new HtmlTable('search-person-hobby-results', Table.person);
+const searchPersonHobbyResults = new HtmlTable('search-person-hobby-results', personColumns);
 searchPersonHobbyResults.noResultsMessage = "No persons with the provided hobby.";
 searchPersonHobbyResults.appendMessage("Press the search button to search.");
 searchPersonHobbyResults.startingHeight = 400;
 searchPersonHobbyResults.useEagerPagination(20);
 searchPersonHobbyResults.usePaginationButtons();
-searchPersonHobbyResultsTarget.appendChild(searchPersonHobbyResults.tableContainer);
+searchPersonHobbyResults.appendTo(searchPersonHobbyResultsTarget);
 
 // Init hobby select
 const searchPersonHobbySelect = document.getElementById('search-person-hobby');
@@ -311,13 +362,13 @@ searchPersonHobbyForm.addEventListener('submit', e => {
 
 const searchPersonPhoneForm = document.getElementById('search-person-phone-form');
 const searchPersonPhoneResultsTarget = document.getElementById('search-person-phone-results-target');
-const searchPersonPhoneResults = new HtmlTable('search-person-phone-results', Table.person);
+const searchPersonPhoneResults = new HtmlTable('search-person-phone-results', personColumns);
 searchPersonPhoneResults.noResultsMessage = "No persons with the provided phone number.";
 searchPersonPhoneResults.appendMessage("Press the search button to search.");
 searchPersonPhoneResults.startingHeight = 400;
 searchPersonPhoneResults.useEagerPagination(20);
 searchPersonPhoneResults.usePaginationButtons();
-searchPersonPhoneResultsTarget.appendChild(searchPersonPhoneResults.tableContainer);
+searchPersonPhoneResults.appendTo(searchPersonPhoneResultsTarget);
 
 searchPersonPhoneForm.addEventListener('submit', e => {
     e.preventDefault();
@@ -363,11 +414,11 @@ function companiesTableCounter(callback) {
 }
 
 const companiesTableTarget = document.getElementById("companies-table-target");
-const companiesTable = new HtmlTable("companies-table", Table.company);
+const companiesTable = new HtmlTable("companies-table", companyColumns);
 companiesTable.useLazyPagination(20, companiesTableLazyPaginator, companiesTableCounter);
 companiesTable.usePaginationButtons();
-companiesTable.page(1, 1340);
-companiesTableTarget.appendChild(companiesTable.tableContainer);
+companiesTable.appendTo(companiesTableTarget);
+companiesTable.refresh();
 
 /**
  * Search for company by size
@@ -375,13 +426,13 @@ companiesTableTarget.appendChild(companiesTable.tableContainer);
 
 const searchCompanySizeForm = document.getElementById('search-company-size-form');
 const searchCompanySizeResultsTarget = document.getElementById('search-company-size-results-target');
-const searchCompanySizeResults = new HtmlTable('search-company-size-results', Table.company);
+const searchCompanySizeResults = new HtmlTable('search-company-size-results', companyColumns);
 searchCompanySizeResults.noResultsMessage = "No persons matching the criteria.";
 searchCompanySizeResults.appendMessage("Press the search button to search.");
 searchCompanySizeResults.startingHeight = 400;
 searchCompanySizeResults.useEagerPagination(20);
 searchCompanySizeResults.usePaginationButtons();
-searchCompanySizeResultsTarget.appendChild(searchCompanySizeResults.tableContainer);
+searchCompanySizeResults.appendTo(searchCompanySizeResultsTarget);
 
 searchCompanySizeForm.addEventListener('submit', e => {
     e.preventDefault();

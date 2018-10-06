@@ -130,6 +130,14 @@ class HtmlTable {
     }
 
     /**
+     * Appends the table to the provided element.
+     * @param HtmlElemeent parent The element to append this table to. 
+     */
+    appendTo(parent) {
+        parent.appendChild(this._tableOuterContainer);
+    }
+
+    /**
      * Creates the outmost container of this HtmlTable.
      */
     createOuterContainer() {
@@ -361,6 +369,8 @@ class HtmlTable {
     startLoadingAnimation() {
         this.startSpinner();
         this.translucent();
+        this._tableInnerContainer.classList.add('loading');
+        this._tableOuterContainer.classList.add('loading');
     }
 
     /**
@@ -369,6 +379,8 @@ class HtmlTable {
     stopLoadingAnimation() {
         this.stopSpinner();
         this.opaque();
+        this._tableInnerContainer.classList.remove('loading');
+        this._tableOuterContainer.classList.remove('loading');
     }
 
     /**
@@ -456,6 +468,7 @@ class HtmlTable {
     startSpinner(loaderWidth = 64, loaderHeight = 64) {
 
         if (!this._spinning) {
+
             const bounding = this.absoluteBoundingBox(this._tableInnerContainer);
             this._spinner = document.createElement('img');
             this._spinner.src = 'loader.gif';
@@ -485,10 +498,12 @@ class HtmlTable {
      * @param {*} element The element to return the absolute bounding box of.
      */
     absoluteBoundingBox(element) {
+
+
         const bodyRect = document.body.getBoundingClientRect();
         const elemRect = element.getBoundingClientRect();
 
-        return {
+        let result = {
             height: elemRect.height,
             width: elemRect.width,
             left: elemRect.left,
@@ -496,6 +511,12 @@ class HtmlTable {
             top: elemRect.top - bodyRect.top,
             bottom: elemRect.bottom - bodyRect.bottom
         }
+
+
+        console.log(element, bodyRect, elemRect, result);
+
+        return result;
+
     }
 
     /**
