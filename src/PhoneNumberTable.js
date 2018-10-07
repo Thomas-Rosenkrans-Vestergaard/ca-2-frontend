@@ -59,7 +59,7 @@ class PhoneNumberTable {
 
         insertButton.addEventListener('click', (e) => {
             e.preventDefault();
-            this.addPhoneNumber(numberInput.value, descriptionInput.value);
+            this.addPhoneNumber({number: numberInput.value, description: descriptionInput.value});
             numberInput.value = '';
             descriptionInput.value = '';
         });
@@ -109,12 +109,21 @@ class PhoneNumberTable {
     }
 
     clear() {
-        this._table.innerHTML = '';
+        
+        if(this._editable){
+            const insertTr = this._tbody.lastChild;
+            this._tbody.innerHTML = '';
+            this._tbody.appendChild(insertTr);
+        }
+
         this._storage = [];
     }
 
-    addPhoneNumber(number, description) {
-        const phoneNumber = { number, description };
+    addPhoneNumbers(phoneNumbers){
+        phoneNumbers.forEach(phoneNumber => this.addPhoneNumber(phoneNumber));
+    }
+
+    addPhoneNumber(phoneNumber) {
         this._storage.push(phoneNumber);
         this.appendPhoneNumber(phoneNumber);
     }

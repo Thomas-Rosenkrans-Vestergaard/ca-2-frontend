@@ -57,89 +57,6 @@ const baseUrl = "http://localhost:8080/ca-2-backend/api/";
 const dataMapper = new DataMapper(baseUrl);
 const tabs = M.Tabs.getInstance(document.getElementById('tabs'));
 
-function viewEditPerson(row) {
-
-    document.getElementById('tab-update-person').classList.remove('disabled');
-    document.getElementById('update-person-firstName').value = row['firstName'];
-    document.getElementById('update-person-lastName').value = row['lastName'];
-    document.getElementById('update-person-email').value = row['email'];
-    document.getElementById('update-person-address-street').value = row['address']['street'];
-    document.getElementById('update-person-address-information').value = row['address']['information'];
-    const citySelected = document.getElementById('update-person-address-city');
-    [...citySelected.children].forEach(option => {
-        if (option.value == row['address']['city']['id']) {
-            option.selected = 'selected';
-            M.FormSelect.init(citySelected);
-            return false;
-        }
-    });
-
-    const updatePhonesTable = document.getElementById('update-person-phones');
-    const body = updatePhonesTable.children[1];
-    body.innerHTML = '';
-    row['phones'].forEach(phone => {
-        const tr = document.createElement('tr');
-        const tdNumber = document.createElement('td');
-        tdNumber.innerText = phone['number'];
-        const tdDescription = document.createElement('td');
-        tdDescription.innerText = phone['description'];
-        tr.appendChild(tdNumber);
-        tr.appendChild(tdDescription);
-        body.appendChild(tr);
-    });
-
-    M.updateTextFields();
-    view('update-person');
-}
-
-const updatePersonButton = document.getElementById('update-person-submit');
-updatePersonButton.addEventListener('click', e => {
-    e.preventDefault();
-
-});
-
-/**
- * Create person form.
- */
-
-const createPhoneNumberTable = new PhoneNumberTable([], true);
-const createPhoneNumberTableTarget = document.getElementById('create-person-phones-target');
-createPhoneNumberTable.appendTo(createPhoneNumberTableTarget);
-
-const createPersonForm  = document.getElementById('create-person-form');
-const createPersonFormSubmit = document.getElementById('create-person-submit');
-createPersonFormSubmit.addEventListener('click', e => {
-
-    e.preventDefault();
-    if (!createPersonForm.checkValidity())
-        return false;
-
-    const person = {
-        firstName: createPersonForm.firstName.value,
-        lastName: createPersonForm.lastName.value,
-        email: createPersonForm.email.value,
-        address: {
-            street: createPersonForm.addressStreet.value,
-            information: createPersonForm.addressInformation.value,
-            city: createPersonForm.addressCity.value,
-        },
-        phones: createPhoneNumberTable.phoneNumbers
-    };
-
-    dataMapper.createPerson(person, (status, body) => {
-        
-        if (status != 201) {
-            error("Could not create person.");
-            error(body.message);
-            return;
-        }
-
-        personsTable.refresh();
-        createPersonForm.reset();
-        view('persons');
-    });
-});
-
 /**
  * Adds an option with the provided value and text to the provided select.
  * @param {*} value The value the option to create.
@@ -435,3 +352,106 @@ searchCompanySizeForm.addEventListener('submit', e => {
     e.preventDefault();
     searchCompanySizeResults.refresh();
 });
+
+/**
+ * Create person form.
+ */
+
+const createPhoneNumberTable = new PhoneNumberTable([], true);
+const createPhoneNumberTableTarget = document.getElementById('create-person-phones-target');
+createPhoneNumberTable.appendTo(createPhoneNumberTableTarget);
+
+const createPersonForm = document.getElementById('create-person-form');
+const createPersonFormSubmit = document.getElementById('create-person-submit');
+createPersonFormSubmit.addEventListener('click', e => {
+
+    e.preventDefault();
+    if (!createPersonForm.checkValidity())
+        return false;
+
+    const person = extractPerson(createPersonForm, createPhoneNumberTable);
+    dataMapper.createPerson(person, (status, body) => {
+
+        if (status != 201) {
+            error("Could not create person.");
+            error(body.message);
+            return;
+        }
+
+        personsTable.refresh();
+        createPersonForm.reset();
+        view('persons');
+    });
+});
+
+/*
+ * Update person form 
+ */
+
+let currentEditPerson = undefined;
+const updatePhoneNumberTable = new PhoneNumberTable([], true);
+const updatePhoneNumberTableTarget = document.getElementById('update-person-phones-target');
+updatePhoneNumberTable.appendTo(updatePhoneNumberTableTarget);
+
+const updatePersonForm = document.getElementById('update-person-form');
+const updatePersonButton = document.getElementById('update-person-submit');
+updatePersonButton.addEventListener('click', e => {
+    e.preventDefault();
+    if (!updatePersonForm.checkValidity())
+        return false;
+
+    const person = extractPerson(updatePersonForm, updatePhoneNumberTable);
+    dataMapper.updatePerson(currentEditPerson.id, person, (status, body) => {
+        
+                if (status != 200) {
+                    error("Could not update person.");
+                    error(body.message);
+                    return;
+                }
+        
+                personsTable.refresh();
+                updatePersonForm.reset();
+                view('persons');
+                document.getElementById('tab-update-person').classList.add('disabled');
+            });
+});
+
+function extractPerson(form, phoneNumberTable) {
+    return {
+        firstName: form.firstName.value,
+        lastName: form.lastName.value,
+        email: form.email.value,
+        address: {
+            street: form.addressStreet.value,
+            information: form.addressInformation.value,
+            city: form.addressCity.value,
+        },
+        phones: phoneNumberTable.phoneNumbers
+    };
+}
+
+function viewEditPerson(person) {
+
+    currentEditPerson = person;
+    document.getElementById('tab-update-person').classList.remove('disabled');
+    document.getElementById('update-person-firstName').value = person['firstName'];
+    document.getElementById('update-person-lastName').value = person['lastName'];
+    document.getElementById('update-person-email').value = person['email'];
+    document.getElementById('update-person-address-street').value = person['address']['street'];
+    document.getElementById('update-person-address-information').value = person['address']['information'];
+
+    const citySelected = document.getElementById('update-person-address-city');
+    [...citySelected.children].forEach(option => {
+        if (option.value == person['address']['city']['id']) {
+            option.selected = 'selected';
+            M.FormSelect.init(citySelected);
+            return false;
+        }
+    });
+
+    updatePhoneNumberTable.clear();
+    updatePhoneNumberTable.addPhoneNumbers(person.phones);
+
+    M.updateTextFields();
+    view('update-person');
+}

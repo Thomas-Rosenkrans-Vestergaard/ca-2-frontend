@@ -210,19 +210,19 @@
           <legend>General</legend>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="text" name="firstName" id="update-person-firstName">
+              <input type="text" name="firstName" id="update-person-firstName" required minlength="1" maxlength="255">
               <label for="update-person-firstName">First name</label>
             </div>
           </div>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="text" name="lastName" id="update-person-lastName">
+              <input type="text" name="lastName" id="update-person-lastName" required minlength="1" maxlength="255">
               <label for="update-person-lastName">Last name</label>
             </div>
           </div>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="email" name="email" id="update-person-email">
+              <input type="email" name="email" id="update-person-email" required minlength="1" maxlength="255">
               <label for="update-person-email">Email</label>
             </div>
           </div>
@@ -231,20 +231,20 @@
           <legend>Address</legend>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="text" name="email" id="update-person-address-street">
+              <input type="text" name="addressStreet" id="update-person-address-street" required minlength="1" maxlength="255">
               <label for="update-person-address-street">Street</label>
             </div>
           </div>
           <div class="row">
             <div class="col s12 input-field">
 
-              <input type="text" name="email" id="update-person-address-information">
+              <input type="text" name="addressInformation" id="update-person-address-information" required minlength="1" maxlength="255">
               <label for="update-person-address-information">Information</label>
             </div>
           </div>
           <div class="row">
             <div class="col s12 input-field">
-              <select id="update-person-address-city">
+              <select id="update-person-address-city" name="addressCity" required>
                 <option value="" disabled selected>City</option>
               </select>
               <label for="update-person-address-city">City</label>
@@ -253,33 +253,9 @@
         </fieldset>
         <fieldset>
           <legend>Phones</legend>
-          <div id="update-person-phones-row" class="row">
-            <div class="col s12">
-              <table id="update-person-phones">
-                <thead>
-                  <th>Number</th>
-                  <th>Description</th>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-            </div>
+          <div id="update-person-phones-target" class="row">
+
           </div>
-          <form>
-            <div class="row">
-              <div class="col s5 input-field">
-                <input type="text" id="update-person-phone-number" required minlength="1" maxlength="255">
-                <label for="update-person-phone-number">Number</label>
-              </div>
-              <div class="col s5 input-field">
-                <input type="text" id="update-person-phone-description" required minlength="1" maxlength="255">
-                <label for="update-person-phone-description">Description</label>
-              </div>
-              <div class="col s2">
-                <button type="submit" class="btn next-to-input-button" id="update-person-phone-add">ADD</button>
-              </div>
-            </div>
-          </form>
         </fieldset>
         <div class="row">
           <div class="col s12">
