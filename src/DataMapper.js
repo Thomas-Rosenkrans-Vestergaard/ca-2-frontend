@@ -5,16 +5,20 @@ class DataMapper {
     }
 
     searchPersonsByName(firstName, lastName, callback) {
-        const url = this.baseUrl + 'persons/first/' + firstName + '/last/' + lastName
+        firstName = firstName == '' ? '_' : firstName;
+        lastName = lastName == '' ? '_' : lastName;
+        const url = this.baseUrl + 'persons/first/' + firstName + '/last/' + lastName;
         this.getFetch(url, callback);
     }
 
     searchPersonsByAddress(street, city, callback) {
+        street = street == '' ? '_' : street;
         const url = this.baseUrl + 'persons/street/' + street + '/city/' + city
         this.getFetch(url, callback);
     }
 
     searchPersonsByHobby(hobbySlug, callback) {
+        hobbySlug = hobbySlug == '' ? '_' : hobbySlug;
         const url = this.baseUrl + 'persons/hobby/' + hobbySlug
         this.getFetch(url, callback);
     }
@@ -58,11 +62,11 @@ class DataMapper {
                 "Accept": "application/json",
             }
         })
-        .then(response => {
-            status = response.status;
-            return response.json();
-        })
-        .then(body => callback(status, body));
+            .then(response => {
+                status = response.status;
+                return response.json();
+            })
+            .then(body => callback(status, body));
     }
 
     getFetch(url, cb) {
@@ -101,6 +105,11 @@ class DataMapper {
     }
 
     searchCompaniesBySize(minMarketValue, maxMarketValue, minEmployees, maxEmployees, cb) {
+        minMarketValue = minMarketValue == '' ? '_' : minMarketValue; 
+        maxMarketValue = maxMarketValue == '' ? '_' : maxMarketValue; 
+        minEmployees = minEmployees == '' ? '_' : minEmployees;
+        maxEmployees = maxEmployees == '' ? '_' : maxEmployees;
+   
         const url = this.baseUrl + `companies/size/${minMarketValue}/${maxMarketValue}/${minEmployees}/${maxEmployees}`;
         this.getFetch(url, cb);
     }
