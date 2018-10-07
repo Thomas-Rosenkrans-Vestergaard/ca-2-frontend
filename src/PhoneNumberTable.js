@@ -43,10 +43,12 @@ class PhoneNumberTable {
         const numberInputTd = document.createElement('td');
         const numberInput = document.createElement('input');
         numberInputTd.appendChild(numberInput);
+        numberInput.setAttribute('placeholder', 'Number');
 
         const descriptionInputTd = document.createElement('td');
         const descriptionInput = document.createElement('input');
         descriptionInputTd.appendChild(descriptionInput);
+        descriptionInput.setAttribute('placeholder', 'Description');
 
         const insertButtonTd = document.createElement('td');
         insertButtonTd.style.width = '100px';

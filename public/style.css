@@ -84,6 +84,15 @@ ul.pagination li {
   animation-iteration-count: infinite;
 }
 
+.phone-number-table-container {
+  background: lightgray;
+  padding: 10px;
+}
+
+.phone-number-table-container ::placeholder {
+  color: #26a69a;
+}
+
 @keyframes color {
   0% {
     background-color: #fff;
