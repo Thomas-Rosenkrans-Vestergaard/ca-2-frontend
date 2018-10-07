@@ -74,11 +74,11 @@ ul.pagination li {
   min-width: 40px;
 }
 
-.html-table-inner-container thead {
+.rest-table-inner-container thead {
   background: #fff;
 }
 
-.html-table-inner-container.loading {
+.rest-table-inner-container.loading {
   animation-name: color;
   animation-duration: 3s;
   animation-iteration-count: infinite;

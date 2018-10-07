@@ -149,7 +149,7 @@ class HtmlTable {
      */
     createOuterContainer() {
         const div = document.createElement('div');
-        div.classList.add('html-table-outer-container');
+        div.classList.add('rest-table-outer-container');
         return div;
     }
 
@@ -158,7 +158,7 @@ class HtmlTable {
      */
     createInnerContainer() {
         const div = document.createElement('div');
-        div.classList.add('html-table-inner-container');
+        div.classList.add('rest-table-inner-container');
 
         return div;
     }
@@ -254,7 +254,7 @@ class HtmlTable {
         this.removePaginationButtons();
 
         const container = document.createElement('div');
-        container.classList.add('html-table-pagination');
+        container.classList.add('rest-table-pagination');
         const ul = document.createElement('ul');
         ul.classList.add('pagination');
         const numberOfPages = Math.ceil(count / this._paginationStrategy.pageSize);
@@ -337,6 +337,9 @@ class HtmlTable {
                 this._currentPage = page;
                 if (refresh)
                     this.createPaginationButtons(rows.length);
+
+                if (rows.length < 1)
+                    this.showNoResultsMessage();
             });
 
             return;
@@ -350,6 +353,9 @@ class HtmlTable {
         this._currentPage = page;
         if (refresh)
             this.createPaginationButtons(this._eagerPaginationRows.length);
+
+        if (rows.length < 1)
+            this.showNoResultsMessage();
     }
 
     /**

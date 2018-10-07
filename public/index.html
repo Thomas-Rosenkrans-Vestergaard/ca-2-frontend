@@ -12,6 +12,14 @@
   <div id="container">
     <h1>Krak</h1>
     <div class="col s12">
+      <p>The source code of the rest api can be found <a
+        href="https://github.com/Thomas-Rosenkrans-Vestergaard/ca-2-backend">here</a>.</p>
+<p>The source of the frontend single page application can be found <a
+        href="https://github.com/Thomas-Rosenkrans-Vestergaard/ca-2-frontend">here</a>.
+</p>
+<p>The documentation of the rest api can be found <a href="https://tvestergaard.com/ca-2-backend/">here</a>.</p>
+    </div>
+    <div class="col s12">
       <ul class="tabs row" id="tabs">
         <li class="tab col s3" id="tab-persons">
           <a class="active" href="#persons">Persons</a>
@@ -185,36 +193,9 @@
             </div>
           </div>
         </fieldset>
-        <fieldset>
+        <fieldset id="create-person-phones-target">
           <legend>Phones</legend>
-          <div id="create-person-phones-row" class="row">
-            <div class="col s12">
-              <table id="create-person-phones">
-                <thead>
-                  <th>Number</th>
-                  <th>Description</th>
-                </thead>
-                <tbody>
-                  <td colspan="2">No numbers.</td>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <form>
-            <div class="row">
-              <div class="col s5 input-field">
-                <input type="text" id="create-person-phone-number" required minlength="1" maxlength="255">
-                <label for="create-person-phone-number">Number</label>
-              </div>
-              <div class="col s5 input-field">
-                <input type="text" id="create-person-phone-description" required minlength="1" maxlength="255">
-                <label for="create-person-phone-description">Description</label>
-              </div>
-              <div class="col s2">
-                <button type="submit" class="btn next-to-input-button" id="create-person-phone-add">ADD</button>
-              </div>
-            </div>
-          </form>
+          
         </fieldset>
         <div class="row">
           <div class="col s12">
