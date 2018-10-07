@@ -12,12 +12,13 @@
   <div id="container">
     <h1>Krak</h1>
     <div class="col s12">
-      <p>The source code of the rest api can be found <a
-        href="https://github.com/Thomas-Rosenkrans-Vestergaard/ca-2-backend">here</a>.</p>
-<p>The source of the frontend single page application can be found <a
-        href="https://github.com/Thomas-Rosenkrans-Vestergaard/ca-2-frontend">here</a>.
-</p>
-<p>The documentation of the rest api can be found <a href="https://tvestergaard.com/ca-2-backend/">here</a>.</p>
+      <p>The source code of the rest api can be found
+        <a href="https://github.com/Thomas-Rosenkrans-Vestergaard/ca-2-backend">here</a>.</p>
+      <p>The source of the frontend single page application can be found
+        <a href="https://github.com/Thomas-Rosenkrans-Vestergaard/ca-2-frontend">here</a>.
+      </p>
+      <p>The documentation of the rest api can be found
+        <a href="https://tvestergaard.com/ca-2-backend/">here</a>.</p>
     </div>
     <div class="col s12">
       <ul class="tabs row" id="tabs">
@@ -148,24 +149,24 @@
       </div>
     </div>
     <div id="create-person" class="tab-contents col s12">
-      <form id="create-person-form">
+      <form id="create-person-form" name="create-person-form">
         <fieldset>
           <legend>General</legend>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="text" name="firstName" id="create-person-firstName">
+              <input type="text" name="firstName" id="create-person-firstName" required minlength="1" maxlength="255">
               <label for="create-person-firstName">First name</label>
             </div>
           </div>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="text" name="lastName" id="create-person-lastName">
+              <input type="text" name="lastName" id="create-person-lastName" required minlength="1" maxlength="255">
               <label for="create-person-lastName">Last name</label>
             </div>
           </div>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="email" name="email" id="create-person-email">
+              <input type="email" name="email" id="create-person-email" required minlength="1" maxlength="255">
               <label for="create-person-email">Email</label>
             </div>
           </div>
@@ -174,29 +175,28 @@
           <legend>Address</legend>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="text" name="email" id="create-person-address-street">
+              <input type="text" name="addressStreet" id="create-person-address-street" required minlength="1" maxlength="255">
               <label for="create-person-address-street">Street</label>
             </div>
           </div>
           <div class="row">
             <div class="col s12 input-field">
-              <input type="text" name="email" id="create-person-address-information">
+              <input type="text" name="addressInformation" id="create-person-address-information" required minlength="1" maxlength="255">
               <label for="create-person-address-information">Information</label>
             </div>
           </div>
           <div class="row">
             <div class="col s12 input-field">
-              <select id="create-person-address-city">
+              <select id="create-person-address-city" name="addressCity" required>
                 <option value="" disabled selected>City</option>
               </select>
               <label for="create-person-address-city">City</label>
             </div>
           </div>
         </fieldset>
-        <fieldset id="create-person-phones-target">
+        <div class="row" id="create-person-phones-target">
           <legend>Phones</legend>
-          
-        </fieldset>
+        </div>
         <div class="row">
           <div class="col s12">
             <button type="submit" id="create-person-submit" class="btn-large">CREATE</button>

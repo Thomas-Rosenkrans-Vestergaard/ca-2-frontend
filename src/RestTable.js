@@ -525,9 +525,6 @@ class HtmlTable {
             bottom: elemRect.bottom - bodyRect.bottom
         }
 
-
-        console.log(element, bodyRect, elemRect, result);
-
         return result;
 
     }

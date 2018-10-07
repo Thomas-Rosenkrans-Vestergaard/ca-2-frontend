@@ -58,7 +58,7 @@ const dataMapper = new DataMapper(baseUrl);
 const tabs = M.Tabs.getInstance(document.getElementById('tabs'));
 
 function viewEditPerson(row) {
-    
+
     document.getElementById('tab-update-person').classList.remove('disabled');
     document.getElementById('update-person-firstName').value = row['firstName'];
     document.getElementById('update-person-lastName').value = row['lastName'];
@@ -67,7 +67,7 @@ function viewEditPerson(row) {
     document.getElementById('update-person-address-information').value = row['address']['information'];
     const citySelected = document.getElementById('update-person-address-city');
     [...citySelected.children].forEach(option => {
-        if (option.value == row['address']['city']['id']){
+        if (option.value == row['address']['city']['id']) {
             option.selected = 'selected';
             M.FormSelect.init(citySelected);
             return false;
@@ -97,69 +97,37 @@ updatePersonButton.addEventListener('click', e => {
     e.preventDefault();
 
 });
-/*
-const addPhoneButton = document.getElementById('create-person-phone-add');
-const phoneNumbersTable = document.getElementById('create-person-phones');
-let phoneNumbersTableInit = false;
-let phoneNumbers = [];
-addPhoneButton.addEventListener('click', e => {
+
+/**
+ * Create person form.
+ */
+
+const createPhoneNumberTable = new PhoneNumberTable([], true);
+const createPhoneNumberTableTarget = document.getElementById('create-person-phones-target');
+createPhoneNumberTable.appendTo(createPhoneNumberTableTarget);
+
+const createPersonForm  = document.getElementById('create-person-form');
+const createPersonFormSubmit = document.getElementById('create-person-submit');
+createPersonFormSubmit.addEventListener('click', e => {
+
     e.preventDefault();
+    if (!createPersonForm.checkValidity())
+        return false;
 
-    const numberInput = document.getElementById('create-person-phone-number');
-    const number = numberInput.value;
-    const descriptionInput = document.getElementById('create-person-phone-description');
-    const description = descriptionInput.value;
-
-    let errors = false;
-
-    if (number == undefined || number.length < 1 || number.length > 255) {
-        error("Invalid phone number.");
-        errors = true;
-    }
-
-    if (description == undefined || description.length < 1 || description.length > 255) {
-        error("Invalid phone description.");
-        errors = true;
-    }
-
-    if (errors)
-        return;
-
-    if (!phoneNumbersTableInit) {
-        phoneNumbersTable.children[1].innerHTML = '';
-        phoneNumbersTableInit = true;
-    }
-
-    const tr = document.createElement('tr');
-    const tdNumber = document.createElement('td');
-    tdNumber.innerText = number;
-    const tdDescription = document.createElement('td');
-    tdDescription.innerText = description;
-    tr.appendChild(tdNumber);
-    tr.appendChild(tdDescription);
-    phoneNumbersTable.children[1].appendChild(tr);
-    phoneNumbers.push({ number: number, description: description });
-
-    numberInput.value = '';
-    descriptionInput.value = '';
-});
-*/
-const createPersonSubmit = document.getElementById('create-person-submit');
-createPersonSubmit.addEventListener('click', e => {
-
-    const submit = {
-        firstName: document.getElementById('create-person-firstName').value,
-        lastName: document.getElementById('create-person-lastName').value,
-        email: document.getElementById('create-person-email').value,
+    const person = {
+        firstName: createPersonForm.firstName.value,
+        lastName: createPersonForm.lastName.value,
+        email: createPersonForm.email.value,
         address: {
-            street: document.getElementById('create-person-address-street').value,
-            information: document.getElementById('create-person-address-information').value,
-            city: document.getElementById('create-person-address-city').value,
+            street: createPersonForm.addressStreet.value,
+            information: createPersonForm.addressInformation.value,
+            city: createPersonForm.addressCity.value,
         },
-        phones: phoneNumbers
+        phones: createPhoneNumberTable.phoneNumbers
     };
 
-    dataMapper.createPerson(submit, (status, body) => {
+    dataMapper.createPerson(person, (status, body) => {
+        
         if (status != 201) {
             error("Could not create person.");
             error(body.message);
@@ -167,6 +135,7 @@ createPersonSubmit.addEventListener('click', e => {
         }
 
         personsTable.refresh();
+        createPersonForm.reset();
         view('persons');
     });
 });

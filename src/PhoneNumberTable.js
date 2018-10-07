@@ -1,11 +1,17 @@
 class PhoneNumberTable {
 
-    constructor(phoneNumbers = []) {
+    constructor(phoneNumbers = [], editable) {
 
+        this._editable = editable;
         this._columns = [{ name: 'Number', key: 'number' }, { name: 'Description', key: 'description' }];
         this._storage = phoneNumbers;
-        this._container = createContainer();
-        this._table = createTable();
+        this._container = this.createContainer();
+        this._table = this.createTable();
+        this._thead = this._table.children[0];
+        this._tbody = this._table.children[1];
+
+        if (this._editable)
+            this.createInsertRow();
 
         this._container.appendChild(this._table);
 
@@ -30,37 +36,39 @@ class PhoneNumberTable {
         return div;
     }
 
-    createForm() {
+    createInsertRow() {
 
-        const form = document.createElement('form');
-        form.classList.add('row');
+        const row = document.createElement('tr');
 
-        const numberInputColumn = this.createInputFieldColumn(5);
+        const numberInputTd = document.createElement('td');
         const numberInput = document.createElement('input');
-        numberInputColumn.appendChild(inputInput);
+        numberInputTd.appendChild(numberInput);
 
-        const descriptionInputColumn = this.createInputFieldColumn(5);
+        const descriptionInputTd = document.createElement('td');
         const descriptionInput = document.createElement('input');
-        descriptionInputColumn.appendChild(descriptionInput);
+        descriptionInputTd.appendChild(descriptionInput);
 
-        const buttonColumn = this.createInputFieldColumn(2);
-        const button = document.createElement('document');
-        buttonColumn.appendChild(button);
+        const insertButtonTd = document.createElement('td');
+        insertButtonTd.style.width = '100px';
+        const insertButton = document.createElement('button');
+        insertButton.innerText = 'Add';
+        insertButton.style.display = 'block';
+        insertButton.style.width = '100px';
+        insertButton.classList.add('btn');
+        insertButtonTd.appendChild(insertButton);
 
-        form.appendChild(numberInputColumn);
-        form.appendChild(descriptionInputColumn);
-        form.appendChild(buttonColumn);
+        insertButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.addPhoneNumber(numberInput.value, descriptionInput.value);
+            numberInput.value = '';
+            descriptionInput.value = '';
+        });
 
-        return form;
-    }
+        row.appendChild(numberInputTd);
+        row.appendChild(descriptionInputTd);
+        row.appendChild(insertButtonTd);
 
-    createInputFieldColumn(col) {
-        const div = document.createElement('div');
-
-        div.classList.add('col');
-        div.classList.add('s' + col);
-
-        return;
+        this._tbody.appendChild(row);
     }
 
     createTable() {
@@ -87,6 +95,12 @@ class PhoneNumberTable {
             tr.appendChild(th);
         });
 
+        if (this._editable) {
+            const th = document.createElement('th');
+            th.innerText = '';
+            tr.appendChild(th);
+        }
+
         thead.appendChild(tr);
     }
 
@@ -100,8 +114,9 @@ class PhoneNumberTable {
     }
 
     addPhoneNumber(number, description) {
-        this._storage.push({ number, description });
-        this.appendRow({ number, description });
+        const phoneNumber = { number, description };
+        this._storage.push(phoneNumber);
+        this.appendPhoneNumber(phoneNumber);
     }
 
     appendPhoneNumber(phoneNumber) {
@@ -111,6 +126,29 @@ class PhoneNumberTable {
             td.innerText = phoneNumber[column.key];
             tr.appendChild(td);
         });
+
+        if (this._editable) {
+            const td = document.createElement('td');
+            const removeButton = document.createElement('button');
+            td.style.width = '100px';
+            removeButton.innerText = 'Remove';
+            removeButton.style.display = 'block';
+            removeButton.style.width = '100px';
+            removeButton.classList.add('btn');
+            removeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                tr.parentElement.removeChild(tr);
+                this._storage.delete(phoneNumber);
+            });
+
+            td.appendChild(removeButton);
+            tr.appendChild(td);
+        }
+
+        if (this._editable)
+            this._tbody.insertBefore(tr, this._tbody.lastChild);
+        else
+            this._tbody.appendChild(tr);
     }
 }
 
