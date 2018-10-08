@@ -1,4 +1,4 @@
-class HtmlTable {
+class RestTable {
 
     constructor(id, columns) {
         this._id = id;
@@ -20,12 +20,12 @@ class HtmlTable {
         this._tableBody = this._tableElement.children[1];
 
         /**
-         * The outermost container created for this HtmlTable.
+         * The outermost container created for this RestTable.
          */
         this._tableOuterContainer = this.createOuterContainer();
 
         /**
-         * The innermost container created for this HtmlTable (directly surrounds the table element)
+         * The innermost container created for this RestTable (directly surrounds the table element)
          */
         this._tableInnerContainer = this.createInnerContainer();
 
@@ -34,7 +34,7 @@ class HtmlTable {
         this._tableInnerContainer.appendChild(this._tableElement);
 
         /**
-         * The callback that is reponsible for providing data (rows) to the HtmlTable when refresh() 
+         * The callback that is reponsible for providing data (rows) to the RestTable when refresh() 
          * is called without a pagination stategy.
          */
         this._populator = undefined;
@@ -60,12 +60,12 @@ class HtmlTable {
         this._currentPage = 1;
 
         /**
-         * The object containing information about the pagination configured in the HtmlTable.
+         * The object containing information about the pagination configured in the RestTable.
          */
         this._paginationStrategy = undefined;
 
         /**
-         * Whether or not the HtmlTable should generate pagination buttons when the table is refreshed.
+         * Whether or not the RestTable should generate pagination buttons when the table is refreshed.
          */
         this._usePaginationButtons = false;
 
@@ -94,7 +94,7 @@ class HtmlTable {
     }
 
     /**
-      * Sets the callback that is reponsible for providing data (rows) to the HtmlTable when refresh() 
+      * Sets the callback that is reponsible for providing data (rows) to the RestTable when refresh() 
       * is called without a pagination stategy.
       */
     set populator(populator) {
@@ -116,7 +116,7 @@ class HtmlTable {
     }
 
     /**
-     * Returns the outermost container of this HtmlTable.
+     * Returns the outermost container of this RestTable.
      */
     get tableContainer() {
         return this._tableOuterContainer;
@@ -145,7 +145,7 @@ class HtmlTable {
     }
 
     /**
-     * Creates the outmost container of this HtmlTable.
+     * Creates the outmost container of this RestTable.
      */
     createOuterContainer() {
         const div = document.createElement('div');
@@ -154,7 +154,7 @@ class HtmlTable {
     }
 
     /**
-     * Creates the innermost container of this HtmlTable.
+     * Creates the innermost container of this RestTable.
      */
     createInnerContainer() {
         const div = document.createElement('div');
@@ -164,7 +164,7 @@ class HtmlTable {
     }
 
     /**
-     * Creates the table HtmlElement of this HtmlTable.
+     * Creates the table HtmlElement of this RestTable.
      * @param {*} id 
      * @param {*} columns 
      */
@@ -200,7 +200,7 @@ class HtmlTable {
     }
 
     /**
-     * Instructs the HtmlTable to use eager pagination. All rows are retrieved when refhresed, but only single pages 
+     * Instructs the RestTable to use eager pagination. All rows are retrieved when refhresed, but only single pages 
      * of the provided size is shown.
      * @param {*} pageSize The number of results on pages.
      */
@@ -209,7 +209,7 @@ class HtmlTable {
     }
 
     /**
-     * Instructs the HtmlTable to use lazy loading for pagination.
+     * Instructs the RestTable to use lazy loading for pagination.
      * 
      * @param pageSize The number of pages the table is configured to hold.
      * @param dataCallback The callback that retrieves the data (rows) for a new page.
@@ -220,7 +220,7 @@ class HtmlTable {
     }
 
     /**
-     * Instructs the HtmlTable to automatically generate pagination buttons.
+     * Instructs the RestTable to automatically generate pagination buttons.
      */
     usePaginationButtons() {
 
@@ -246,7 +246,7 @@ class HtmlTable {
     }
 
     /**
-     * Creates pagination buttons for this HtmlTable.
+     * Creates pagination buttons for this RestTable.
      * @param {*} count The number of rows to generate pagination buttons for.
      */
     createPaginationButtons(count) {
@@ -286,7 +286,7 @@ class HtmlTable {
     }
 
     /**
-     * Clears the tbody of this HtmlTable.
+     * Clears the tbody of this RestTable.
      */
     clear() {
         this._tableBody.innerHTML = '';
@@ -295,7 +295,7 @@ class HtmlTable {
     /**
      * Loads the page with the provided page number.
      * @param Integer page The page to load, starts at 1.
-     * @param boolean refresh Whether or not the data in the HtmlTable should be refreshed.
+     * @param boolean refresh Whether or not the data in the RestTable should be refreshed.
      */
     page(page, refresh = false) {
 
@@ -321,7 +321,7 @@ class HtmlTable {
     /**
      * Loads the page with the provided page number using eager pagination. 
      * @param {*} page The page to load, starts at 1.
-     * @param boolean refresh Whether or not the data in the HtmlTable should be reloaded.  
+     * @param boolean refresh Whether or not the data in the RestTable should be reloaded.  
      */
     pageWithEagerPagination(page, refresh = false) {
 
@@ -361,7 +361,7 @@ class HtmlTable {
     /**
      * Loads the page with the provided page number using lazy pagination.
      * @param {*} page The page to load, starts at 1.
-     * @param boolean refresh Whether or not the data in the HtmlTable should be reloaded. 
+     * @param boolean refresh Whether or not the data in the RestTable should be reloaded. 
      */
     pageWithLazyPagination(page, refresh = false) {
 
@@ -377,7 +377,7 @@ class HtmlTable {
     }
 
     /**
-     * Starts the animation(s) showing that the HtmlTable is currently refreshing.
+     * Starts the animation(s) showing that the RestTable is currently refreshing.
      */
     startLoadingAnimation() {
         this.startSpinner();
@@ -387,7 +387,7 @@ class HtmlTable {
     }
 
     /**
-     * Stops the animation(s) showing that the HtmlTable is currently refreshing.
+     * Stops the animation(s) showing that the RestTable is currently refreshing.
      */
     stopLoadingAnimation() {
         this.stopSpinner();
@@ -397,21 +397,21 @@ class HtmlTable {
     }
 
     /**
-     * Makes the tbody of the HtmlTable translucent.
+     * Makes the tbody of the RestTable translucent.
      */
     translucent() {
         this._tableBody.style.opacity = 0.4;
     }
 
     /**
-     * Makes the tbody of the HtmlTable opaque.
+     * Makes the tbody of the RestTable opaque.
      */
     opaque() {
         this._tableBody.style.opacity = 1;
     }
 
     /**
-     * Appends the provided rows to this HtmlTable.
+     * Appends the provided rows to this RestTable.
      * @param object[] rows The rows to append.
      */
     appendRows(rows) {
@@ -420,7 +420,7 @@ class HtmlTable {
 
 
     /**
-     * Appends the provided row to this HtmlTable.
+     * Appends the provided row to this RestTable.
      * @param object row The row to append. 
      */
     appendRow(row) {
@@ -444,7 +444,7 @@ class HtmlTable {
     }
 
     /**
-     * Appends the provided non-html message to this HtmlTable.
+     * Appends the provided non-html message to this RestTable.
      * The message is inserted into the tbody, with a colspan equalling the number of columns in the table.
      * 
      * @param {*} message The message to append.
@@ -459,7 +459,7 @@ class HtmlTable {
     }
 
     /**
-     * Appends the provided html message to this HtmlTable.
+     * Appends the provided html message to this RestTable.
      * The message is inserted into the tbody, with a colspan equalling the number of columns in the table.
      * 
      * @param {*} message The message to append.
@@ -474,7 +474,7 @@ class HtmlTable {
     }
 
     /**
-     * Starts the spinning animation showing that the HtmlTable is loading data.
+     * Starts the spinning animation showing that the RestTable is loading data.
      * @param {*} loaderWidth The width of the loading animation in pixels.
      * @param {*} loaderHeight The height of the loading animation in pixels.
      */
@@ -496,7 +496,7 @@ class HtmlTable {
     }
 
     /**
-     * Stops the spinning animation showing that the HtmlTable is loading data.
+     * Stops the spinning animation showing that the RestTable is loading data.
      */
     stopSpinner() {
         if (this._spinning) {
@@ -555,7 +555,7 @@ class HtmlTable {
     }
 
     /**
-     * Causes the HtmlTable to display the message for when no results are available.
+     * Causes the RestTable to display the message for when no results are available.
      */
     showNoResultsMessage() {
         if (this._noResultsMessage != null)
@@ -566,4 +566,4 @@ class HtmlTable {
     }
 }
 
-export default HtmlTable;
+export default RestTable;
