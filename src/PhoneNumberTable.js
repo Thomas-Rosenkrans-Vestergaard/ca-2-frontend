@@ -149,7 +149,7 @@ class PhoneNumberTable {
             removeButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 tr.parentElement.removeChild(tr);
-                this._storage.delete(phoneNumber);
+                this._storage.remove(phoneNumber);
             });
 
             td.appendChild(removeButton);

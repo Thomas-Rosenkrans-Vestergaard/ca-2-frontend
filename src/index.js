@@ -53,7 +53,7 @@ const personColumns = [
     }
 ];
 
-const baseUrl = "http://localhost:8080/ca-2-backend/api/";
+const baseUrl = "https://tvestergaard.com/ca-2-backend/api/";
 const dataMapper = new DataMapper(baseUrl);
 const tabs = M.Tabs.getInstance(document.getElementById('tabs'));
 
